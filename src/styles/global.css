@@ -15,22 +15,33 @@
   body[data-print-target="members-schedule-table"] #members-schedule-table,
   body[data-print-target="members-schedule-table"] #members-schedule-table *,
   body[data-print-target="coach-schedule-table"] #coach-schedule-table,
-  body[data-print-target="coach-schedule-table"] #coach-schedule-table * {
+  body[data-print-target="coach-schedule-table"] #coach-schedule-table *,
+  body[data-print-target="all-schedules"] #all-schedules,
+  body[data-print-target="all-schedules"] #all-schedules * {
     visibility: visible;
   }
 
   /* Position it at the top left of the page, remove scrollbars */
   body[data-print-target="members-schedule-table"] #members-schedule-table,
-  body[data-print-target="coach-schedule-table"] #coach-schedule-table {
+  body[data-print-target="coach-schedule-table"] #coach-schedule-table,
+  body[data-print-target="all-schedules"] #all-schedules {
     position: absolute;
     left: 0;
     top: 0;
-    width: 150vw !important; /* Force a very large width so the 10 columns never wrap */
-    transform: scale(0.65) !important; /* Scale it down to fit the A4 page perfectly */
-    transform-origin: top left !important;
+    width: 100%;
     margin: 0 !important;
     padding: 0 !important;
     overflow: visible !important; /* No scrollbars on PDF */
+  }
+
+  body[data-print-target] {
+    zoom: 0.65; /* Use zoom instead of transform so pagination works perfectly */
+  }
+
+  .print-page-break {
+    page-break-after: always;
+    break-after: page;
+    margin-bottom: 2cm;
   }
 
   /* Force browsers to print background colors exactly as they appear */

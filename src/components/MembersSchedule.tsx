@@ -31,14 +31,81 @@ export function MembersSchedule() {
   const [activeRoom, setActiveRoom] = useState<Room>(ROOMS[0]);
   
   const activePeriod = periods.find(p => p.id === activePeriodId);
-  
-  // Filter sessions for the active period and room
-  const roomSessions = sessions.filter(s => s.periodId === activePeriodId && s.roomId === activeRoom && !s.isPermanence);
   const dates = Array.from(new Set(sessions.filter(s => s.periodId === activePeriodId).map(s => s.date))).sort();
+  
+  const [isPrintingAll, setIsPrintingAll] = useState(false);
 
-  // Determine coach for the room in this period
-  const assignedCoachEntry = activePeriod ? Object.entries(activePeriod.coachAssignments).find(([_, r]) => r === activeRoom) : null;
-  const assignedCoach = assignedCoachEntry ? assignedCoachEntry[0] : null;
+  const handlePrintAll = () => {
+    setIsPrintingAll(true);
+    // Timeout to allow React to render the hidden tables
+    setTimeout(() => {
+      exportToPDF('all-schedules', `Plannings_Adherents_Toutes_Salles_${activePeriod?.name || ''}`);
+      setIsPrintingAll(false);
+    }, 300); // 300ms is safe for DOM update
+  };
+
+  const renderTable = (room: string) => {
+    const roomSessions = sessions.filter(s => s.periodId === activePeriodId && s.roomId === room && !s.isPermanence);
+    
+    // Determine coach for the room in this period
+    const assignedCoachEntry = activePeriod ? Object.entries(activePeriod.coachAssignments).find(([_, r]) => r === room) : null;
+    const assignedCoach = assignedCoachEntry ? assignedCoachEntry[0] : null;
+
+    return (
+      <div className="overflow-x-auto border border-gray-300 bg-white rounded-lg shadow-sm">
+        <table className="w-full text-center border-collapse text-sm text-gray-900">
+          <thead>
+            <tr>
+              <th colSpan={dates.length + 1} className="py-4 text-xl font-bold uppercase tracking-wider border-b border-gray-300 bg-gray-50">
+                {room} <span className="text-gray-500 font-medium ml-2 text-lg">({activePeriod?.name})</span>
+              </th>
+            </tr>
+            <tr>
+              <th className="border-r border-b border-gray-300 w-32 bg-gray-50"></th>
+              {dates.map(date => (
+                <th key={date} className="py-3 px-2 border-r border-b border-gray-300 w-1/5 font-bold uppercase bg-gray-50">
+                  {format(parseISO(date), 'EEEE', { locale: fr })}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {TIME_SLOTS.map(slot => (
+              <tr key={slot.id}>
+                <td className="py-4 px-2 border-r border-b border-gray-300 font-medium bg-gray-50">
+                  {slot.label}
+                </td>
+                {dates.map(date => {
+                  const session = roomSessions.find(s => s.date === date && s.timeSlotId === slot.id);
+                  const colorClass = session ? (DISCIPLINE_COLORS[session.discipline] || 'bg-gray-200 text-gray-800') : 'bg-white text-gray-600';
+                  
+                  return (
+                    <td key={date} className={`border-r border-b border-gray-300 font-bold uppercase tracking-wide ${colorClass}`}>
+                      <div className="w-full h-full p-4 flex items-center justify-center min-h-[80px]">
+                        {session ? session.discipline : 'ACCES LIBRE'}
+                      </div>
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+            {/* Ligne des coachs */}
+            <tr>
+              <td className="py-3 px-2 border-r border-gray-300 font-medium bg-gray-50"></td>
+              {dates.map(date => (
+                <td 
+                  key={date} 
+                  className={`border-r border-gray-300 font-bold uppercase tracking-wide py-3 ${assignedCoach ? (COACH_COLORS[assignedCoach] || 'bg-gray-200 text-gray-800') : 'bg-white'}`}
+                >
+                  {assignedCoach || ''}
+                </td>
+              ))}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    );
+  };
 
   return (
     <div className="space-y-6">
@@ -76,13 +143,20 @@ export function MembersSchedule() {
             </button>
           ))}
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <button 
             onClick={() => exportToPDF('members-schedule-table', `Planning_Adherents_${activeRoom}_${activePeriod?.name}`)}
             className="text-sm px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded shadow-md flex items-center gap-2"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M12 18v-6"></path><path d="m9 15 3 3 3-3"></path></svg>
-            TÉLÉCHARGER PDF
+            IMPRIMER LA SALLE
+          </button>
+          <button 
+            onClick={handlePrintAll}
+            className="text-sm px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded shadow-md flex items-center gap-2"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M16 13H8"></path><path d="M16 17H8"></path><path d="M10 9H8"></path></svg>
+            TOUT IMPRIMER
           </button>
         </div>
       </div>
@@ -92,58 +166,21 @@ export function MembersSchedule() {
           Aucun entraînement prévu pour cette période. Le club est fermé.
         </div>
       ) : (
-        <div id="members-schedule-table" className="overflow-x-auto border border-gray-300 bg-white rounded-lg shadow-sm">
-          <table className="w-full text-center border-collapse text-sm text-gray-900">
-            <thead>
-              <tr>
-                <th colSpan={dates.length + 1} className="py-4 text-xl font-bold uppercase tracking-wider border-b border-gray-300 bg-gray-50">
-                  {activeRoom} <span className="text-gray-500 font-medium ml-2 text-lg">({activePeriod?.name})</span>
-                </th>
-              </tr>
-              <tr>
-                <th className="border-r border-b border-gray-300 w-32 bg-gray-50"></th>
-                {dates.map(date => (
-                  <th key={date} className="py-3 px-2 border-r border-b border-gray-300 w-1/5 font-bold uppercase bg-gray-50">
-                    {format(parseISO(date), 'EEEE', { locale: fr })}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {TIME_SLOTS.map(slot => (
-                <tr key={slot.id}>
-                  <td className="py-4 px-2 border-r border-b border-gray-300 font-medium bg-gray-50">
-                    {slot.label}
-                  </td>
-                  {dates.map(date => {
-                    const session = roomSessions.find(s => s.date === date && s.timeSlotId === slot.id);
-                    const colorClass = session ? (DISCIPLINE_COLORS[session.discipline] || 'bg-gray-200 text-gray-800') : 'bg-white text-gray-600';
-                    
-                    return (
-                      <td key={date} className={`border-r border-b border-gray-300 font-bold uppercase tracking-wide ${colorClass}`}>
-                        <div className="w-full h-full p-4 flex items-center justify-center min-h-[80px]">
-                          {session ? session.discipline : 'ACCES LIBRE'}
-                        </div>
-                      </td>
-                    );
-                  })}
-                </tr>
+        <>
+          <div id="members-schedule-table">
+            {renderTable(activeRoom)}
+          </div>
+          
+          {isPrintingAll && (
+            <div id="all-schedules" className="hidden print:block">
+              {ROOMS.map((room, idx) => (
+                <div key={room} className={idx < ROOMS.length - 1 ? "print-page-break" : ""}>
+                  {renderTable(room)}
+                </div>
               ))}
-              {/* Ligne des coachs */}
-              <tr>
-                <td className="py-3 px-2 border-r border-gray-300 font-medium bg-gray-50"></td>
-                {dates.map(date => (
-                  <td 
-                    key={date} 
-                    className={`border-r border-gray-300 font-bold uppercase tracking-wide py-3 ${assignedCoach ? (COACH_COLORS[assignedCoach] || 'bg-gray-200 text-gray-800') : 'bg-white'}`}
-                  >
-                    {assignedCoach || ''}
-                  </td>
-                ))}
-              </tr>
-            </tbody>
-          </table>
-        </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
