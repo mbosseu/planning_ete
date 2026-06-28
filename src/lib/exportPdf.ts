@@ -1,13 +1,19 @@
-import html2canvas from 'html2canvas';
-import { jsPDF } from 'jspdf';
-
 export const exportToPDF = async (elementId: string, filename: string) => {
   const element = document.getElementById(elementId);
-  if (!element) return;
+  if (!element) {
+    alert("Erreur : le tableau est introuvable.");
+    return;
+  }
+
+  alert("Génération du PDF en cours... Veuillez patienter quelques secondes !");
 
   try {
+    // Importation dynamique pour éviter de bloquer le chargement initial d'Astro
+    const html2canvas = (await import('html2canvas')).default;
+    const { jsPDF } = await import('jspdf');
+
     const canvas = await html2canvas(element, {
-      scale: 2, // Higher resolution
+      scale: 2, 
       useCORS: true,
       logging: false,
       backgroundColor: '#ffffff'
@@ -25,8 +31,10 @@ export const exportToPDF = async (elementId: string, filename: string) => {
 
     pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
     pdf.save(`${filename}.pdf`);
-  } catch (error) {
+    
+    alert("Le téléchargement est terminé !");
+  } catch (error: any) {
     console.error('Error generating PDF', error);
-    alert('Une erreur est survenue lors de la création du PDF.');
+    alert('Une erreur est survenue : ' + (error.message || ''));
   }
 };
