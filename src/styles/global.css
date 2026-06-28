@@ -1,6 +1,11 @@
 @import "tailwindcss";
 
 @media print {
+  @page {
+    size: landscape;
+    margin: 0.5cm; /* Small margin, removes browser headers/footers */
+  }
+
   /* Hide everything by default during print if a print target is set */
   body[data-print-target] * {
     visibility: hidden;
@@ -8,32 +13,36 @@
   
   /* Make only the target visible */
   body[data-print-target="members-schedule-table"] #members-schedule-table,
-  body[data-print-target="members-schedule-table"] #members-schedule-table * {
-    visibility: visible;
-  }
-  
+  body[data-print-target="members-schedule-table"] #members-schedule-table *,
   body[data-print-target="coach-schedule-table"] #coach-schedule-table,
   body[data-print-target="coach-schedule-table"] #coach-schedule-table * {
     visibility: visible;
   }
 
-  /* Position it at the top left of the page */
+  /* Position it at the top left of the page, remove scrollbars */
   body[data-print-target="members-schedule-table"] #members-schedule-table,
   body[data-print-target="coach-schedule-table"] #coach-schedule-table {
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
+    overflow: visible !important; /* No scrollbars on PDF */
   }
 
-  /* Force browsers to print background colors and text colors exactly as they appear */
+  /* Scale the table slightly to fit 2 weeks on landscape */
+  body[data-print-target] {
+    zoom: 0.75; 
+  }
+
+  /* Force browsers to print background colors exactly as they appear */
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
   
-  /* Remove shadows and borders to make it look clean on paper */
+  /* Clean table borders */
   table {
     border-collapse: collapse !important;
+    width: 100% !important;
   }
 }
