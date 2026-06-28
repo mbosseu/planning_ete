@@ -54,8 +54,8 @@ export function CoachSchedule() {
         </div>
       </div>
 
-      <div className="flex justify-between items-center">
-        <div className="flex gap-2 overflow-x-auto pb-2">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex gap-2 overflow-x-auto pb-2 w-full sm:w-auto">
           {periods.map(p => (
             <button
               key={p.id}
