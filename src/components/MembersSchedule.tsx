@@ -96,8 +96,8 @@ export function MembersSchedule() {
           <table className="w-full text-center border-collapse text-sm text-gray-900">
             <thead>
               <tr>
-                <th colSpan={6} className="py-4 text-xl font-bold uppercase tracking-wider border-b border-gray-300 bg-gray-50">
-                  {activeRoom}
+                <th colSpan={dates.length + 1} className="py-4 text-xl font-bold uppercase tracking-wider border-b border-gray-300 bg-gray-50">
+                  {activeRoom} <span className="text-gray-500 font-medium ml-2 text-lg">({activePeriod?.name})</span>
                 </th>
               </tr>
               <tr>
