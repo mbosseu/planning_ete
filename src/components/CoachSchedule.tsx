@@ -27,14 +27,8 @@ export function CoachSchedule() {
   const [activeCoach, setActiveCoach] = useState<CoachName>(COACHES[0]);
   const [activePeriodId, setActivePeriodId] = useState(periods[0]?.id);
   
-  const [isPrintingAll, setIsPrintingAll] = useState(false);
-
   const handlePrintAll = () => {
-    setIsPrintingAll(true);
-    setTimeout(() => {
-      exportToPDF('all-schedules', `Plannings_Coachs_Tous_${activePeriod?.name || ''}`);
-      setIsPrintingAll(false);
-    }, 300);
+    exportToPDF('all-schedules', `Plannings_Coachs_Tous_${activePeriod?.name || ''}`);
   };
 
   const renderTable = (coach: CoachName) => {
@@ -165,15 +159,13 @@ export function CoachSchedule() {
             {renderTable(activeCoach)}
           </div>
           
-          {isPrintingAll && (
-            <div id="all-schedules" className="hidden print:block">
-              {COACHES.map((coach, idx) => (
-                <div key={coach} className={idx < COACHES.length - 1 ? "print-page-break" : ""}>
-                  {renderTable(coach)}
-                </div>
-              ))}
-            </div>
-          )}
+          <div id="all-schedules" className="hidden print:block">
+            {COACHES.map((coach, idx) => (
+              <div key={coach} className={idx < COACHES.length - 1 ? "print-page-break" : ""}>
+                {renderTable(coach)}
+              </div>
+            ))}
+          </div>
         </>
       )}
     </div>

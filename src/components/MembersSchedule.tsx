@@ -33,15 +33,8 @@ export function MembersSchedule() {
   const activePeriod = periods.find(p => p.id === activePeriodId);
   const dates = Array.from(new Set(sessions.filter(s => s.periodId === activePeriodId).map(s => s.date))).sort();
   
-  const [isPrintingAll, setIsPrintingAll] = useState(false);
-
   const handlePrintAll = () => {
-    setIsPrintingAll(true);
-    // Timeout to allow React to render the hidden tables
-    setTimeout(() => {
-      exportToPDF('all-schedules', `Plannings_Adherents_Toutes_Salles_${activePeriod?.name || ''}`);
-      setIsPrintingAll(false);
-    }, 300); // 300ms is safe for DOM update
+    exportToPDF('all-schedules', `Plannings_Adherents_Toutes_Salles_${activePeriod?.name || ''}`);
   };
 
   const renderTable = (room: string) => {
@@ -171,15 +164,13 @@ export function MembersSchedule() {
             {renderTable(activeRoom)}
           </div>
           
-          {isPrintingAll && (
-            <div id="all-schedules" className="hidden print:block">
-              {ROOMS.map((room, idx) => (
-                <div key={room} className={idx < ROOMS.length - 1 ? "print-page-break" : ""}>
-                  {renderTable(room)}
-                </div>
-              ))}
-            </div>
-          )}
+          <div id="all-schedules" className="hidden print:block">
+            {ROOMS.map((room, idx) => (
+              <div key={room} className={idx < ROOMS.length - 1 ? "print-page-break" : ""}>
+                {renderTable(room)}
+              </div>
+            ))}
+          </div>
         </>
       )}
     </div>
