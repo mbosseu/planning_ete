@@ -25,15 +25,12 @@
     position: absolute;
     left: 0;
     top: 0;
-    width: 100vw;
+    width: 150vw !important; /* Force a very large width so the 10 columns never wrap */
+    transform: scale(0.65) !important; /* Scale it down to fit the A4 page perfectly */
+    transform-origin: top left !important;
     margin: 0 !important;
     padding: 0 !important;
     overflow: visible !important; /* No scrollbars on PDF */
-  }
-
-  /* Scale the table down significantly to fit 2 weeks on landscape */
-  body[data-print-target] {
-    zoom: 0.60; /* 60% instead of 75% to make sure everything fits */
   }
 
   /* Force browsers to print background colors exactly as they appear */
