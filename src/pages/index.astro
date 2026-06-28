@@ -1,0 +1,26 @@
+---
+import { App } from '../components/App';
+import '../styles/global.css';
+---
+
+<html lang="fr">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Boxing Center - Planning d'Été</title>
+	</head>
+	<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
+		<div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
+			<header class="border-b border-gray-200 dark:border-gray-800 pb-6">
+				<h1 class="text-3xl font-extrabold tracking-tight">Boxing Center</h1>
+				<p class="text-gray-500 dark:text-gray-400 mt-2">Gestion Intelligente du Planning d'Été</p>
+			</header>
+
+			<main>
+				<App client:only="react" />
+			</main>
+		</div>
+	</body>
+</html>
