@@ -1,1 +1,39 @@
 @import "tailwindcss";
+
+@media print {
+  /* Hide everything by default during print if a print target is set */
+  body[data-print-target] * {
+    visibility: hidden;
+  }
+  
+  /* Make only the target visible */
+  body[data-print-target="members-schedule-table"] #members-schedule-table,
+  body[data-print-target="members-schedule-table"] #members-schedule-table * {
+    visibility: visible;
+  }
+  
+  body[data-print-target="coach-schedule-table"] #coach-schedule-table,
+  body[data-print-target="coach-schedule-table"] #coach-schedule-table * {
+    visibility: visible;
+  }
+
+  /* Position it at the top left of the page */
+  body[data-print-target="members-schedule-table"] #members-schedule-table,
+  body[data-print-target="coach-schedule-table"] #coach-schedule-table {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  /* Force browsers to print background colors and text colors exactly as they appear */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  /* Remove shadows and borders to make it look clean on paper */
+  table {
+    border-collapse: collapse !important;
+  }
+}
