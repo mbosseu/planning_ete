@@ -50,7 +50,7 @@ export const INITIAL_PERIODS: Period[] = [
     name: 'Période 2 (3 août - 9 août)',
     startDate: '2026-08-03',
     endDate: '2026-08-09',
-    hasTraining: false,
+    hasTraining: true, // Ouvert en accès libre total
     coachAssignments: {
       'Mehdi': null,
       'Dadi': null,
