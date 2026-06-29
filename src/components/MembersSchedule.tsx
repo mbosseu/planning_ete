@@ -9,124 +9,102 @@ import { exportToPDF } from '../lib/exportPdf';
 import type { Room } from '../lib/types';
 
 const DISCIPLINE_COLORS: Record<string, string> = {
-  'Boxe anglaise': 'bg-red-600 text-white',
-  'Boxing Camp': 'bg-purple-700 text-white',
-  'Permanence': 'bg-emerald-500 text-white',
-};
-
-const COACH_COLORS: Record<string, string> = {
-  'Mehdi': 'bg-blue-600 text-white',
-  'Dadi': 'bg-red-700 text-white',
-  'Walid': 'bg-green-600 text-white',
-  'Faye': 'bg-orange-500 text-white',
-  'Valentin Gutt': 'bg-gray-500 text-white',
-  'Renaud': 'bg-indigo-600 text-white',
+  'Boxe anglaise': 'bg-[#1e40af] text-white',
+  'Boxing Camp': 'bg-[#b91c1c] text-white',
+  'Permanence': 'bg-[#065f46] text-white',
+  'ACCÈS LIBRE': 'bg-[#111827] text-gray-400',
+  'Pause': 'bg-[#1f2937] text-transparent',
 };
 
 export function MembersSchedule() {
   const sessions = useStore(sessionsStore);
-  const periods = useStore(periodsStore);
   
-  const [activePeriodId, setActivePeriodId] = useState(periods[0]?.id);
+  // Custom period types for Members
+  const memberPeriods = [
+    { id: 'training', name: 'Entraînements (20 juil - 02 août & 10 août - 23 août)' },
+    { id: 'free', name: 'Fermeture / Accès Libre Total (03 août - 09 août)' }
+  ];
+  
+  const [activePeriodId, setActivePeriodId] = useState(memberPeriods[0].id);
   const [activeRoom, setActiveRoom] = useState<Room>(ROOMS[0]);
   
-  const activePeriod = periods.find(p => p.id === activePeriodId);
-  const dates = Array.from(new Set(sessions.filter(s => s.periodId === activePeriodId).map(s => s.date))).sort();
+  // We use p1a to generate the training schedule (since they are all identical for members)
+  // and p2 for the free access schedule
+  const sourcePeriodId = activePeriodId === 'training' ? 'p1a' : 'p2';
+  
+  // Generate a generic "Week 1" since schedules repeat identically each week for members
+  const dates = Array.from(new Set(sessions.filter(s => s.periodId === sourcePeriodId).map(s => s.date))).sort().slice(0, 5); // Just 5 days (Monday-Friday)
   
   const handlePrintAll = () => {
-    exportToPDF('all-schedules', `Plannings_Adherents_Toutes_Salles_${activePeriod?.name || ''}`);
+    exportToPDF('all-schedules', `Plannings_Adherents_Toutes_Salles_${activePeriodId}`);
   };
 
   const renderTable = (room: string) => {
-    const roomSessions = sessions.filter(s => s.periodId === activePeriodId && s.roomId === room && !s.isPermanence);
-    
-    // Determine coach for the room in this period
-    const assignedCoachEntry = activePeriod ? Object.entries(activePeriod.coachAssignments).find(([_, r]) => r === room) : null;
-    const assignedCoach = assignedCoachEntry ? assignedCoachEntry[0] : null;
-
-    const weeks = [];
-    for (let i = 0; i < dates.length; i += 5) {
-      weeks.push(dates.slice(i, i + 5));
-    }
+    const roomSessions = sessions.filter(s => s.periodId === sourcePeriodId && s.roomId === room && !s.isPermanence);
 
     return (
-      <div className="space-y-12 print:space-y-8">
-        {weeks.map((weekDates, weekIdx) => (
-          <div key={weekIdx} className="overflow-x-auto print:overflow-visible bg-white rounded-[1.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-gray-100">
-            <table className="w-full text-center border-collapse text-sm">
-              <thead>
-                <tr>
-                  <th colSpan={weekDates.length + 1} className="py-6 px-8 bg-[#1c2646] border-b-[6px] border-[#c59e5e]">
-                    <div className="flex justify-between items-center">
-                      <div className="text-left">
-                        <div className="text-[#c59e5e] font-black tracking-widest text-sm mb-1 uppercase">Boxing Center Planning</div>
-                        <div className="text-3xl font-sans font-black uppercase tracking-widest text-white">
-                          <span className="text-[#c59e5e]">/</span> {room}
-                          <span className="text-white/60 font-medium ml-3 text-xl tracking-normal">({activePeriod?.name} - Sem. {weekIdx + 1})</span>
-                        </div>
-                      </div>
-                      <img src="/logo.png" alt="Boxing Center" className="h-14 object-contain" />
+      <div className="print:mt-4 bg-[#111827] overflow-hidden rounded shadow-2xl border-4 border-[#1c2646]">
+        <table className="w-full text-center border-collapse">
+          <thead>
+            <tr>
+              <th colSpan={dates.length + 1} className="relative py-8 px-8 bg-[#1c2646] border-b-2 border-gray-800">
+                {/* Background Boxers Image Placeholder / Effect */}
+                <div className="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?q=80&w=2000')] bg-cover bg-center mix-blend-overlay"></div>
+                <div className="relative z-10 flex justify-between items-center">
+                  <div className="text-left">
+                    <div className="text-white text-3xl md:text-5xl font-sans font-black uppercase tracking-widest">
+                      SALLE <span className="text-[#c59e5e]">{room}</span>
                     </div>
-                  </th>
-                </tr>
-                <tr>
-                  <th className="border-r border-b-2 border-gray-100 w-24 bg-gray-50 print:p-2"></th>
-                  {weekDates.map(date => (
-                    <th key={date} className="py-4 px-2 border-r border-b-2 border-gray-100 font-bold uppercase bg-gray-50 text-[#1c2646] text-xs sm:text-sm print:text-xs">
-                      {format(parseISO(date), 'EEEE', { locale: fr })}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {TIME_SLOTS.map(slot => (
-                  <tr key={slot.id} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="py-3 px-2 border-r border-b border-gray-100 font-bold text-[#1c2646] bg-gray-50/50 text-xs sm:text-sm print:text-xs">
-                      {slot.label}
+                  </div>
+                  <img src="/logo.png" alt="Boxing Center" className="h-16 md:h-20 object-contain drop-shadow-2xl" />
+                </div>
+              </th>
+            </tr>
+            <tr>
+              <th className="border border-gray-800 w-28 bg-[#2a4365] print:p-2"></th>
+              {dates.map(date => (
+                <th key={date} className="py-4 px-2 border border-gray-800 font-bold uppercase bg-[#2a4365] text-white text-sm tracking-widest">
+                  {format(parseISO(date), 'EEEE', { locale: fr })}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {TIME_SLOTS.map(slot => (
+              <tr key={slot.id}>
+                <td className="py-3 px-2 border border-gray-800 font-bold text-white bg-[#3182ce] text-sm whitespace-nowrap">
+                  {slot.startTime}-{slot.endTime}
+                </td>
+                {dates.map(date => {
+                  const session = roomSessions.find(s => s.date === date && s.timeSlotId === slot.id);
+                  let content = "ACCÈS LIBRE";
+                  let bgClass = DISCIPLINE_COLORS['ACCÈS LIBRE'];
+                  
+                  if (session) {
+                    if (session.discipline === 'Pause') {
+                      bgClass = DISCIPLINE_COLORS['Pause'];
+                      content = "";
+                    } else if (session.discipline === 'Accès libre') {
+                      bgClass = DISCIPLINE_COLORS['ACCÈS LIBRE'];
+                      content = "ACCÈS LIBRE";
+                    } else {
+                      bgClass = DISCIPLINE_COLORS[session.discipline] || 'bg-gray-700 text-white';
+                      content = session.discipline;
+                    }
+                  }
+                  
+                  return (
+                    <td key={date} className={`border border-gray-800 font-black uppercase tracking-widest text-xs sm:text-sm p-0 m-0 ${bgClass}`}>
+                      <div className="w-full h-full flex items-center justify-center min-h-[70px] px-2 py-4">
+                        {content}
+                      </div>
                     </td>
-                    {weekDates.map(date => {
-                      const session = roomSessions.find(s => s.date === date && s.timeSlotId === slot.id);
-                      let content = <span className="text-gray-300">-</span>;
-                      let cellClass = "bg-white";
-                      
-                      if (session) {
-                        const isPerm = session.isPermanence || session.discipline === 'ACCES LIBRE';
-                        
-                        let bgClass = 'bg-[#1c2646]/10 text-[#1c2646]';
-                        let textTitleClass = '';
-                        
-                        if (session.discipline === 'Pause') {
-                          bgClass = 'bg-gray-100 text-gray-500';
-                        } else if (isPerm || session.discipline === 'Permanence') {
-                          bgClass = 'bg-[#c59e5e]/15 text-[#1c2646] border-l-4 border-l-[#c59e5e]';
-                        } else if (session.discipline === 'Boxe anglaise') {
-                          bgClass = 'bg-[#1c2646]/10 text-[#1c2646] border-l-4 border-l-[#1c2646]';
-                        } else if (session.discipline === 'Boxing Camp') {
-                          bgClass = 'bg-[#8B1E28]/10 text-[#1c2646] border-l-4 border-l-[#8B1E28]';
-                          textTitleClass = 'text-[#8B1E28]';
-                        }
-                        
-                        cellClass = bgClass;
-                        content = <span className={`font-bold text-sm ${textTitleClass}`}>{session.discipline}</span>;
-                      } else {
-                        cellClass = 'bg-[#1c2646]/5 text-[#1c2646]/60';
-                        content = <span className="font-semibold text-xs tracking-wide">ACCÈS LIBRE</span>;
-                      }
-                      
-                      return (
-                        <td key={date} className={`border-r border-b border-gray-100 font-bold uppercase tracking-wide text-xs sm:text-sm print:text-xs ${cellClass}`}>
-                          <div className="w-full h-full p-2 flex items-center justify-center min-h-[50px] sm:min-h-[80px] print:min-h-[60px]">
-                            {content}
-                          </div>
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ))}
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     );
   };
@@ -141,8 +119,8 @@ export function MembersSchedule() {
               onClick={() => setActiveRoom(r)}
               className={`px-5 py-2 rounded-lg text-sm font-bold uppercase tracking-wider whitespace-nowrap transition-colors border-2 ${
                 activeRoom === r 
-                  ? 'bg-brand-navy border-brand-navy text-brand-gold shadow-md' 
-                  : 'bg-white text-brand-navy/60 border-gray-200 hover:border-brand-navy/50 hover:text-brand-navy'
+                  ? 'bg-[#c59e5e] border-[#c59e5e] text-[#1c2646] shadow-md' 
+                  : 'bg-white text-gray-400 border-gray-200 hover:border-[#c59e5e] hover:text-[#c59e5e]'
               }`}
             >
               {r.toUpperCase()}
@@ -153,14 +131,14 @@ export function MembersSchedule() {
 
       <div className="print:hidden flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="flex gap-2 overflow-x-auto pb-2 w-full sm:w-auto">
-          {periods.map(p => (
+          {memberPeriods.map(p => (
             <button
               key={p.id}
               onClick={() => setActivePeriodId(p.id)}
-              className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide whitespace-nowrap transition-colors border-2 ${
+              className={`px-4 py-2 rounded-md text-sm font-bold uppercase tracking-wide whitespace-nowrap transition-colors border-2 ${
                 activePeriodId === p.id 
-                  ? 'bg-brand-navy border-brand-navy text-brand-gold shadow-md' 
-                  : 'bg-white text-brand-navy/60 border-gray-200 hover:border-brand-navy/50 hover:text-brand-navy'
+                  ? 'bg-[#1c2646] border-[#1c2646] text-white shadow-md' 
+                  : 'bg-white text-gray-500 border-gray-200 hover:border-[#1c2646] hover:text-[#1c2646]'
               }`}
             >
               {p.name}
@@ -169,11 +147,11 @@ export function MembersSchedule() {
         </div>
         <div className="flex flex-wrap gap-2">
           <button 
-            onClick={() => exportToPDF('members-schedule-table', `Planning_Adherents_${activeRoom}_${activePeriod?.name}`)}
+            onClick={() => exportToPDF('members-schedule-table', `Planning_Adherents_${activeRoom}_${activePeriodId}`)}
             className="text-sm px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded shadow-md flex items-center gap-2"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M12 18v-6"></path><path d="m9 15 3 3 3-3"></path></svg>
-            IMPRIMER LE TABLEAU
+            IMPRIMER
           </button>
           <button 
             onClick={handlePrintAll}
@@ -182,51 +160,20 @@ export function MembersSchedule() {
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M16 13H8"></path><path d="M16 17H8"></path><path d="M10 9H8"></path></svg>
             TOUT IMPRIMER
           </button>
-          <button 
-            onClick={async (e) => {
-              const btn = e.currentTarget;
-              const originalText = btn.innerHTML;
-              btn.innerHTML = '⏳ Création du ZIP...';
-              btn.disabled = true;
-              
-              try {
-                const { exportAllToZip } = await import('../lib/exportZip');
-                await exportAllToZip('', 'all-members-schedules', activePeriod?.name || 'Periode');
-              } catch (err) {
-                console.error(err);
-                alert("Erreur lors de la création du ZIP.");
-              } finally {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-              }
-            }}
-            className="text-sm px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-bold rounded shadow-md flex items-center gap-2 disabled:opacity-50"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-            TOUT TÉLÉCHARGER (ZIP)
-          </button>
         </div>
       </div>
 
-      {!activePeriod?.hasTraining ? (
-        <div className="p-8 text-center text-gray-500 bg-gray-50 dark:bg-gray-800 rounded-xl">
-          Aucun entraînement prévu pour cette période. Le club est fermé.
-        </div>
-      ) : (
-        <>
-          <div id="members-schedule-table">
-            {renderTable(activeRoom)}
+      <div id="members-schedule-table">
+        {renderTable(activeRoom)}
+      </div>
+      
+      <div id="all-schedules" className="hidden">
+        {ROOMS.map((room, idx) => (
+          <div key={room} className={idx < ROOMS.length - 1 ? "print-page-break" : ""}>
+            {renderTable(room)}
           </div>
-          
-          <div id="all-schedules" className="hidden">
-            {ROOMS.map((room, idx) => (
-              <div key={room} className={idx < ROOMS.length - 1 ? "print-page-break" : ""}>
-                {renderTable(room)}
-              </div>
-            ))}
-          </div>
-        </>
-      )}
+        ))}
+      </div>
     </div>
   );
 }
