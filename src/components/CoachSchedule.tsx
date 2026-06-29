@@ -36,7 +36,7 @@ export function CoachSchedule() {
     const assignedRoom = activePeriod?.coachAssignments[coach];
 
     return (
-      <div className="overflow-x-auto border border-gray-300 bg-white rounded-lg shadow-sm">
+      <div className="overflow-x-auto print:overflow-visible border border-gray-300 bg-white rounded-lg shadow-sm mb-8">
         <table className="w-full text-center border-collapse text-sm text-gray-900">
           <thead>
             <tr>
