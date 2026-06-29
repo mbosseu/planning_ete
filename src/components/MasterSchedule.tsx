@@ -5,9 +5,11 @@ import { DndContext, closestCenter } from '@dnd-kit/core';
 import type { DragEndEvent } from '@dnd-kit/core';
 import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { TIME_SLOTS } from '../lib/data';
 
 export function MasterSchedule() {
-  const sessions = useStore(sessionsStore);
+  const allSessions = useStore(sessionsStore);
+  const sessions = allSessions.filter(session => TIME_SLOTS.some(slot => slot.id === session.timeSlotId));
   const periods = useStore(periodsStore);
   
   const [activePeriodId, setActivePeriodId] = useState(periods[0]?.id);

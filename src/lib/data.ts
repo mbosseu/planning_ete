@@ -4,7 +4,6 @@ export const ROOMS: Room[] = ['Minimes', 'Saint-Cyprien', 'Ramonville', 'États-
 export const COACHES: CoachName[] = ['Mehdi', 'Dadi', 'Walid', 'Faye', 'Valentin Gutt', 'Renaud'];
 
 export const TIME_SLOTS: TimeSlot[] = [
-  { id: 'ts-perm-1', label: '09h00 - 10h00', startTime: '09:00', endTime: '10:00', isTraining: false },
   { id: 'ts-1', label: '10h00 - 11h00', startTime: '10:00', endTime: '11:00', isTraining: true },
   { id: 'ts-perm-2', label: '11h00 - 12h30', startTime: '11:00', endTime: '12:30', isTraining: false },
   { id: 'ts-2', label: '12h30 - 13h30', startTime: '12:30', endTime: '13:30', isTraining: true },
