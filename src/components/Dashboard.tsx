@@ -35,8 +35,24 @@ export function Dashboard() {
         classesHours += duration;
       }
     });
+    const coachPeriods = periods.filter(p => Object.values(p.coachAssignments).includes(coach as any));
+    let daysAssigned = 0;
+    coachPeriods.forEach(p => {
+      const start = new Date(p.startDate);
+      const end = new Date(p.endDate);
+      const diffTime = Math.abs(end.getTime() - start.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+      daysAssigned += diffDays;
+    });
+    
+    const weeksAssigned = daysAssigned > 0 ? daysAssigned / 7 : 1; // avoid div by 0
 
-    return { name: coach, classes: classesHours, perms: permsHours, total: classesHours + permsHours };
+    return { 
+      name: coach, 
+      classesWeekly: classesHours / weeksAssigned, 
+      permsWeekly: permsHours / weeksAssigned, 
+      totalWeekly: (classesHours + permsHours) / weeksAssigned 
+    };
   });
 
   return (
@@ -68,16 +84,16 @@ export function Dashboard() {
       </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
-        <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Heures par Coach (Approximation)</h2>
+        <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Moyenne d'Heures Hebdomadaires par Coach</h2>
         <div className="space-y-4">
           {coachStats.map(stat => (
             <div key={stat.name} className="flex items-center justify-between">
               <span className="w-32 font-medium">{stat.name}</span>
               <div className="flex-1 mx-4 bg-gray-100 dark:bg-gray-700 rounded-full h-3 overflow-hidden flex">
-                <div className="bg-indigo-500 h-full" style={{ width: `${(stat.classes / 35) * 100}%` }} title="Cours" />
-                <div className="bg-emerald-500 h-full" style={{ width: `${(stat.perms / 35) * 100}%` }} title="Permanences" />
+                <div className="bg-indigo-500 h-full" style={{ width: `${(stat.classesWeekly / 35) * 100}%` }} title={`Cours: ${stat.classesWeekly.toFixed(1)}h`} />
+                <div className="bg-emerald-500 h-full" style={{ width: `${(stat.permsWeekly / 35) * 100}%` }} title={`Permanences: ${stat.permsWeekly.toFixed(1)}h`} />
               </div>
-              <span className="w-16 text-right text-sm text-gray-500">{stat.total}h / 35h</span>
+              <span className="w-16 text-right text-sm text-gray-500">{Math.round(stat.totalWeekly)}h / 35h</span>
             </div>
           ))}
         </div>
