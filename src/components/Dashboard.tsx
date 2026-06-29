@@ -2,7 +2,7 @@ import React from 'react';
 import { useStore } from '@nanostores/react';
 import { sessionsStore, periodsStore, generateAndSave } from '../lib/store';
 import { Button } from './ui/button';
-import { COACHES, ROOMS } from '../lib/data';
+import { COACHES, ROOMS, TIME_SLOTS } from '../lib/data';
 import type { CoachName } from '../lib/types';
 
 export function Dashboard() {
@@ -14,9 +14,29 @@ export function Dashboard() {
 
   const coachStats = COACHES.map(coach => {
     const coachSessions = sessions.filter(s => s.coachId === coach);
-    const classes = coachSessions.filter(s => !s.isPermanence).length; // 1h per class
-    const perms = coachSessions.filter(s => s.isPermanence).length * 4; // Assuming 4h per block for simplicity
-    return { name: coach, classes, perms, total: classes + perms };
+    
+    let classesHours = 0;
+    let permsHours = 0;
+
+    coachSessions.forEach(session => {
+      const slot = TIME_SLOTS.find(t => t.id === session.timeSlotId);
+      if (!slot) return;
+      
+      const startHour = parseInt(slot.startTime.split(':')[0], 10);
+      const startMin = parseInt(slot.startTime.split(':')[1], 10);
+      const endHour = parseInt(slot.endTime.split(':')[0], 10);
+      const endMin = parseInt(slot.endTime.split(':')[1], 10);
+      
+      const duration = (endHour + endMin / 60) - (startHour + startMin / 60);
+
+      if (session.isPermanence) {
+        permsHours += duration;
+      } else if (session.discipline !== 'Pause') {
+        classesHours += duration;
+      }
+    });
+
+    return { name: coach, classes: classesHours, perms: permsHours, total: classesHours + permsHours };
   });
 
   return (
