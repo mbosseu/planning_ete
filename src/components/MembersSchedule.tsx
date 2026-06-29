@@ -85,8 +85,8 @@ export function MembersSchedule() {
                   
                   if (session) {
                     if (session.discipline === 'Pause') {
-                      bgClass = 'bg-[#1f2937] text-gray-500';
-                      content = "-";
+                      bgClass = DISCIPLINE_COLORS['ACCÈS LIBRE'];
+                      content = "ACCÈS LIBRE";
                     } else if (session.discipline === 'Accès libre') {
                       bgClass = DISCIPLINE_COLORS['ACCÈS LIBRE'];
                       content = "ACCÈS LIBRE";
