@@ -54,9 +54,9 @@ export function MembersSchedule() {
               </th>
             </tr>
             <tr>
-              <th className="border-r border-b border-gray-300 w-32 bg-gray-50"></th>
+              <th className="border-r border-b border-gray-300 w-24 bg-gray-50 print:p-1"></th>
               {dates.map(date => (
-                <th key={date} className="py-3 px-2 border-r border-b border-gray-300 w-1/5 font-bold uppercase bg-gray-50">
+                <th key={date} className="py-2 px-1 border-r border-b border-gray-300 font-bold uppercase bg-gray-50 text-xs print:text-[10px]">
                   {format(parseISO(date), 'EEEE', { locale: fr })}
                 </th>
               ))}
@@ -65,7 +65,7 @@ export function MembersSchedule() {
           <tbody>
             {TIME_SLOTS.map(slot => (
               <tr key={slot.id}>
-                <td className="py-4 px-2 border-r border-b border-gray-300 font-medium bg-gray-50">
+                <td className="py-2 px-1 border-r border-b border-gray-300 font-medium bg-gray-50 text-xs print:text-[10px]">
                   {slot.label}
                 </td>
                 {dates.map(date => {
@@ -73,8 +73,8 @@ export function MembersSchedule() {
                   const colorClass = session ? (DISCIPLINE_COLORS[session.discipline] || 'bg-gray-200 text-gray-800') : 'bg-white text-gray-600';
                   
                   return (
-                    <td key={date} className={`border-r border-b border-gray-300 font-bold uppercase tracking-wide ${colorClass}`}>
-                      <div className="w-full h-full p-4 flex items-center justify-center min-h-[80px]">
+                    <td key={date} className={`border-r border-b border-gray-300 font-bold uppercase tracking-wide text-[10px] sm:text-xs ${colorClass}`}>
+                      <div className="w-full h-full p-1 sm:p-2 md:p-4 print:p-1 flex items-center justify-center min-h-[40px] sm:min-h-[60px] md:min-h-[80px]">
                         {session ? session.discipline : 'ACCES LIBRE'}
                       </div>
                     </td>
@@ -84,11 +84,11 @@ export function MembersSchedule() {
             ))}
             {/* Ligne des coachs */}
             <tr>
-              <td className="py-3 px-2 border-r border-gray-300 font-medium bg-gray-50"></td>
+              <td className="py-2 px-1 border-r border-gray-300 font-medium bg-gray-50 print:p-1"></td>
               {dates.map(date => (
                 <td 
                   key={date} 
-                  className={`border-r border-gray-300 font-bold uppercase tracking-wide py-3 ${assignedCoach ? (COACH_COLORS[assignedCoach] || 'bg-gray-200 text-gray-800') : 'bg-white'}`}
+                  className={`border-r border-gray-300 font-bold uppercase tracking-wide py-2 px-1 text-[10px] sm:text-xs ${assignedCoach ? (COACH_COLORS[assignedCoach] || 'bg-gray-200 text-gray-800') : 'bg-white'}`}
                 >
                   {assignedCoach || ''}
                 </td>
@@ -161,18 +161,12 @@ export function MembersSchedule() {
       ) : (
         <>
           <div id="members-schedule-table">
-            <h2 className="hidden print:block text-2xl font-bold text-center mb-4 pb-2 border-b-2 border-gray-200">
-              Planning Salle : {activeRoom} - {activePeriod?.name}
-            </h2>
             {renderTable(activeRoom)}
           </div>
           
           <div id="all-schedules" className="hidden">
             {ROOMS.map((room, idx) => (
               <div key={room} className={idx < ROOMS.length - 1 ? "print-page-break" : ""}>
-                <h2 className="text-2xl font-bold text-center mb-4 pb-2 border-b-2 border-gray-200">
-                  Planning Salle : {room} - {activePeriod?.name}
-                </h2>
                 {renderTable(room)}
               </div>
             ))}

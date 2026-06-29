@@ -45,9 +45,9 @@ export function CoachSchedule() {
               </th>
             </tr>
             <tr>
-              <th className="border-r border-b border-gray-300 w-32 bg-gray-50"></th>
+              <th className="border-r border-b border-gray-300 w-24 bg-gray-50 print:p-1"></th>
               {dates.map(date => (
-                <th key={date} className="py-3 px-2 border-r border-b border-gray-300 w-1/5 font-bold uppercase bg-gray-50">
+                <th key={date} className="py-2 px-1 border-r border-b border-gray-300 font-bold uppercase bg-gray-50 text-xs print:text-[10px]">
                   {format(parseISO(date), 'EEEE', { locale: fr })}
                 </th>
               ))}
@@ -56,20 +56,22 @@ export function CoachSchedule() {
           <tbody>
             {TIME_SLOTS.map(slot => (
               <tr key={slot.id}>
-                <td className="py-4 px-2 border-r border-b border-gray-300 font-medium bg-gray-50">
+                <td className="py-2 px-1 border-r border-b border-gray-300 font-medium bg-gray-50 text-xs print:text-[10px]">
                   {slot.label}
                 </td>
                 {dates.map(date => {
                   const session = coachSessions.find(s => s.date === date && s.timeSlotId === slot.id);
-                  const isPerm = session?.isPermanence;
-                  
-                  const cellContent = session ? (isPerm ? 'PERMANENCE' : session.discipline) : '';
                   const colorClass = session ? (DISCIPLINE_COLORS[session.discipline] || 'bg-gray-200 text-gray-800') : 'bg-white text-gray-600';
                   
                   return (
-                    <td key={date} className={`border-r border-b border-gray-300 font-bold uppercase tracking-wide ${colorClass}`}>
-                      <div className="w-full h-full p-4 flex items-center justify-center min-h-[80px]">
-                        {cellContent}
+                    <td key={date} className={`border-r border-b border-gray-300 font-bold uppercase tracking-wide text-[10px] sm:text-xs ${colorClass}`}>
+                      <div className="w-full h-full p-1 sm:p-2 md:p-4 print:p-1 flex flex-col items-center justify-center min-h-[40px] sm:min-h-[60px] md:min-h-[80px]">
+                        {session ? (
+                          <>
+                            <span>{session.discipline}</span>
+                            <span className="text-[9px] sm:text-[10px] opacity-90 mt-1">{session.roomId}</span>
+                          </>
+                        ) : '-'}
                       </div>
                     </td>
                   );
@@ -156,18 +158,12 @@ export function CoachSchedule() {
       ) : (
         <>
           <div id="coach-schedule-table">
-            <h2 className="hidden print:block text-2xl font-bold text-center mb-4 pb-2 border-b-2 border-gray-200">
-              Planning Coach : {activeCoach} - {activePeriod?.name}
-            </h2>
             {renderTable(activeCoach)}
           </div>
           
           <div id="all-schedules" className="hidden">
             {COACHES.map((coach, idx) => (
               <div key={coach} className={idx < COACHES.length - 1 ? "print-page-break" : ""}>
-                <h2 className="text-2xl font-bold text-center mb-4 pb-2 border-b-2 border-gray-200">
-                  Planning Coach : {coach} - {activePeriod?.name}
-                </h2>
                 {renderTable(coach)}
               </div>
             ))}
