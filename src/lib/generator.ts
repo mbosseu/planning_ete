@@ -33,11 +33,13 @@ export function generateScheduleForPeriod(period: Period, existingSessions: Clas
         
         if (!coach && period.id !== 'p2') return; // No coach assigned, unless it's p2 (accès libre)
 
+        let trainingCount = 0;
         TIME_SLOTS.forEach((slot, slotIndex) => {
           if (slot.isTraining) {
-            // Simple heuristic to alternate disciplines
-            const disciplineIndex = (dayIndex + roomIndex + slotIndex) % DISCIPLINES.length;
+            // Alternate disciplines based on training session count, not raw slot index
+            const disciplineIndex = (dayIndex + roomIndex + trainingCount) % DISCIPLINES.length;
             const discipline = period.id === 'p2' ? 'Accès libre' : DISCIPLINES[disciplineIndex];
+            trainingCount++;
 
             sessions.push({
               id: `session-${period.id}-${room}-${dateStr}-${slot.id}`,

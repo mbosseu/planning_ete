@@ -5,7 +5,7 @@ import { generateAllSchedules } from './generator';
 
 // Initial state, check if we have something in localStorage
 const isBrowser = typeof window !== 'undefined';
-const storedSessions = isBrowser ? localStorage.getItem('boxing-sessions') : null;
+const storedSessions = isBrowser ? localStorage.getItem('boxing-sessions-v2') : null;
 
 export const periodsStore = atom<Period[]>(INITIAL_PERIODS);
 export const sessionsStore = atom<ClassSession[]>(storedSessions ? JSON.parse(storedSessions) : []);
@@ -15,7 +15,7 @@ export function generateAndSave() {
   const newSessions = generateAllSchedules(periodsStore.get());
   sessionsStore.set(newSessions);
   if (isBrowser) {
-    localStorage.setItem('boxing-sessions', JSON.stringify(newSessions));
+    localStorage.setItem('boxing-sessions-v2', JSON.stringify(newSessions));
   }
 }
 
@@ -25,6 +25,6 @@ export function updateSession(sessionId: string, updates: Partial<ClassSession>)
   const updated = sessions.map(s => s.id === sessionId ? { ...s, ...updates } : s);
   sessionsStore.set(updated);
   if (isBrowser) {
-    localStorage.setItem('boxing-sessions', JSON.stringify(updated));
+    localStorage.setItem('boxing-sessions-v2', JSON.stringify(updated));
   }
 }
