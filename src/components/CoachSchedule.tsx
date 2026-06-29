@@ -35,63 +35,72 @@ export function CoachSchedule() {
     const coachSessions = sessions.filter(s => s.periodId === activePeriodId && s.coachId === coach);
     const assignedRoom = activePeriod?.coachAssignments[coach];
 
+    const weeks = [];
+    for (let i = 0; i < dates.length; i += 5) {
+      weeks.push(dates.slice(i, i + 5));
+    }
+
     return (
-      <div className="overflow-x-auto print:overflow-visible border border-gray-300 bg-white rounded-lg shadow-sm mb-8">
-        <table className="w-full text-center border-collapse text-sm text-gray-900">
-          <thead>
-            <tr>
-              <th colSpan={dates.length + 1} className="py-4 text-xl font-bold uppercase tracking-wider border-b border-gray-300 bg-gray-50">
-                Planning {coach} <span className="text-gray-500 font-medium ml-2 text-lg">({activePeriod?.name})</span>
-              </th>
-            </tr>
-            <tr>
-              <th className="border-r border-b border-gray-300 w-24 bg-gray-50 print:p-1"></th>
-              {dates.map(date => (
-                <th key={date} className="py-2 px-1 border-r border-b border-gray-300 font-bold uppercase bg-gray-50 text-xs print:text-[10px]">
-                  {format(parseISO(date), 'EEEE', { locale: fr })}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {TIME_SLOTS.map(slot => (
-              <tr key={slot.id}>
-                <td className="py-2 px-1 border-r border-b border-gray-300 font-medium bg-gray-50 text-xs print:text-[10px]">
-                  {slot.label}
-                </td>
-                {dates.map(date => {
-                  const session = coachSessions.find(s => s.date === date && s.timeSlotId === slot.id);
-                  const colorClass = session ? (DISCIPLINE_COLORS[session.discipline] || 'bg-gray-200 text-gray-800') : 'bg-white text-gray-600';
-                  
-                  return (
-                    <td key={date} className={`border-r border-b border-gray-300 font-bold uppercase tracking-wide text-[10px] sm:text-xs ${colorClass}`}>
-                      <div className="w-full h-full p-1 sm:p-2 md:p-4 print:p-1 flex flex-col items-center justify-center min-h-[40px] sm:min-h-[60px] md:min-h-[80px]">
-                        {session ? (
-                          <>
-                            <span>{session.discipline}</span>
-                            <span className="text-[9px] sm:text-[10px] opacity-90 mt-1">{session.roomId}</span>
-                          </>
-                        ) : '-'}
-                      </div>
+      <div className="space-y-8 print:space-y-6">
+        {weeks.map((weekDates, weekIdx) => (
+          <div key={weekIdx} className="overflow-x-auto print:overflow-visible border border-gray-300 bg-white rounded-lg shadow-sm">
+            <table className="w-full text-center border-collapse text-sm text-gray-900">
+              <thead>
+                <tr>
+                  <th colSpan={weekDates.length + 1} className="py-4 text-xl font-bold uppercase tracking-wider border-b border-gray-300 bg-gray-50">
+                    Coach : {coach} <span className="text-gray-500 font-medium ml-2 text-lg">({activePeriod?.name} - Semaine {weekIdx + 1})</span>
+                  </th>
+                </tr>
+                <tr>
+                  <th className="border-r border-b border-gray-300 w-24 bg-gray-50 print:p-2"></th>
+                  {weekDates.map(date => (
+                    <th key={date} className="py-2 px-1 border-r border-b border-gray-300 font-bold uppercase bg-gray-50 text-xs sm:text-sm print:text-xs">
+                      {format(parseISO(date), 'EEEE', { locale: fr })}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {TIME_SLOTS.map(slot => (
+                  <tr key={slot.id}>
+                    <td className="py-2 px-1 border-r border-b border-gray-300 font-medium bg-gray-50 text-xs sm:text-sm print:text-xs">
+                      {slot.label}
                     </td>
-                  );
-                })}
-              </tr>
-            ))}
-            {/* Ligne des Salles */}
-            <tr>
-              <td className="border-r border-gray-300 bg-gray-50"></td>
-              {dates.map(date => (
-                <td 
-                  key={date} 
-                  className={`border-r border-gray-300 font-bold uppercase tracking-wide py-3 ${assignedRoom ? (ROOM_COLORS[assignedRoom] || 'bg-gray-200 text-gray-800') : 'bg-white'}`}
-                >
-                  {assignedRoom || ''}
-                </td>
-              ))}
-            </tr>
-          </tbody>
-        </table>
+                    {weekDates.map(date => {
+                      const session = coachSessions.find(s => s.date === date && s.timeSlotId === slot.id);
+                      const colorClass = session ? (DISCIPLINE_COLORS[session.discipline] || 'bg-gray-200 text-gray-800') : 'bg-white text-gray-600';
+                      
+                      return (
+                        <td key={date} className={`border-r border-b border-gray-300 font-bold uppercase tracking-wide text-xs sm:text-sm print:text-xs ${colorClass}`}>
+                          <div className="w-full h-full p-2 sm:p-4 print:p-2 flex flex-col items-center justify-center min-h-[40px] sm:min-h-[80px] print:min-h-[60px]">
+                            {session ? (
+                              <>
+                                <span>{session.discipline}</span>
+                                <span className="text-[10px] sm:text-[11px] opacity-90 mt-1">{session.roomId}</span>
+                              </>
+                            ) : '-'}
+                          </div>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+                {/* Ligne des Salles */}
+                <tr>
+                  <td className="py-2 px-1 border-r border-gray-300 font-medium bg-gray-50 print:p-2"></td>
+                  {weekDates.map(date => (
+                    <td 
+                      key={date} 
+                      className={`border-r border-gray-300 font-bold uppercase tracking-wide py-2 px-1 text-xs sm:text-sm print:text-xs ${assignedRoom ? (ROOM_COLORS[assignedRoom] || 'bg-gray-200 text-gray-800') : 'bg-white'}`}
+                    >
+                      {assignedRoom || ''}
+                    </td>
+                  ))}
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        ))}
       </div>
     );
   };

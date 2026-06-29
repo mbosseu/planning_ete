@@ -44,58 +44,67 @@ export function MembersSchedule() {
     const assignedCoachEntry = activePeriod ? Object.entries(activePeriod.coachAssignments).find(([_, r]) => r === room) : null;
     const assignedCoach = assignedCoachEntry ? assignedCoachEntry[0] : null;
 
+    const weeks = [];
+    for (let i = 0; i < dates.length; i += 5) {
+      weeks.push(dates.slice(i, i + 5));
+    }
+
     return (
-      <div className="overflow-x-auto print:overflow-visible border border-gray-300 bg-white rounded-lg shadow-sm mb-8">
-        <table className="w-full text-center border-collapse text-sm text-gray-900">
-          <thead>
-            <tr>
-              <th colSpan={dates.length + 1} className="py-4 text-xl font-bold uppercase tracking-wider border-b border-gray-300 bg-gray-50">
-                {room} <span className="text-gray-500 font-medium ml-2 text-lg">({activePeriod?.name})</span>
-              </th>
-            </tr>
-            <tr>
-              <th className="border-r border-b border-gray-300 w-24 bg-gray-50 print:p-1"></th>
-              {dates.map(date => (
-                <th key={date} className="py-2 px-1 border-r border-b border-gray-300 font-bold uppercase bg-gray-50 text-xs print:text-[10px]">
-                  {format(parseISO(date), 'EEEE', { locale: fr })}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {TIME_SLOTS.map(slot => (
-              <tr key={slot.id}>
-                <td className="py-2 px-1 border-r border-b border-gray-300 font-medium bg-gray-50 text-xs print:text-[10px]">
-                  {slot.label}
-                </td>
-                {dates.map(date => {
-                  const session = roomSessions.find(s => s.date === date && s.timeSlotId === slot.id);
-                  const colorClass = session ? (DISCIPLINE_COLORS[session.discipline] || 'bg-gray-200 text-gray-800') : 'bg-white text-gray-600';
-                  
-                  return (
-                    <td key={date} className={`border-r border-b border-gray-300 font-bold uppercase tracking-wide text-[10px] sm:text-xs ${colorClass}`}>
-                      <div className="w-full h-full p-1 sm:p-2 md:p-4 print:p-1 flex items-center justify-center min-h-[40px] sm:min-h-[60px] md:min-h-[80px]">
-                        {session ? session.discipline : 'ACCES LIBRE'}
-                      </div>
+      <div className="space-y-8 print:space-y-6">
+        {weeks.map((weekDates, weekIdx) => (
+          <div key={weekIdx} className="overflow-x-auto print:overflow-visible border border-gray-300 bg-white rounded-lg shadow-sm">
+            <table className="w-full text-center border-collapse text-sm text-gray-900">
+              <thead>
+                <tr>
+                  <th colSpan={weekDates.length + 1} className="py-4 text-xl font-bold uppercase tracking-wider border-b border-gray-300 bg-gray-50">
+                    {room} <span className="text-gray-500 font-medium ml-2 text-lg">({activePeriod?.name} - Semaine {weekIdx + 1})</span>
+                  </th>
+                </tr>
+                <tr>
+                  <th className="border-r border-b border-gray-300 w-24 bg-gray-50 print:p-2"></th>
+                  {weekDates.map(date => (
+                    <th key={date} className="py-2 px-1 border-r border-b border-gray-300 font-bold uppercase bg-gray-50 text-xs sm:text-sm print:text-xs">
+                      {format(parseISO(date), 'EEEE', { locale: fr })}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {TIME_SLOTS.map(slot => (
+                  <tr key={slot.id}>
+                    <td className="py-2 px-1 border-r border-b border-gray-300 font-medium bg-gray-50 text-xs sm:text-sm print:text-xs">
+                      {slot.label}
                     </td>
-                  );
-                })}
-              </tr>
-            ))}
-            {/* Ligne des coachs */}
-            <tr>
-              <td className="py-2 px-1 border-r border-gray-300 font-medium bg-gray-50 print:p-1"></td>
-              {dates.map(date => (
-                <td 
-                  key={date} 
-                  className={`border-r border-gray-300 font-bold uppercase tracking-wide py-2 px-1 text-[10px] sm:text-xs ${assignedCoach ? (COACH_COLORS[assignedCoach] || 'bg-gray-200 text-gray-800') : 'bg-white'}`}
-                >
-                  {assignedCoach || ''}
-                </td>
-              ))}
-            </tr>
-          </tbody>
-        </table>
+                    {weekDates.map(date => {
+                      const session = roomSessions.find(s => s.date === date && s.timeSlotId === slot.id);
+                      const colorClass = session ? (DISCIPLINE_COLORS[session.discipline] || 'bg-gray-200 text-gray-800') : 'bg-white text-gray-600';
+                      
+                      return (
+                        <td key={date} className={`border-r border-b border-gray-300 font-bold uppercase tracking-wide text-xs sm:text-sm print:text-xs ${colorClass}`}>
+                          <div className="w-full h-full p-2 sm:p-4 print:p-2 flex items-center justify-center min-h-[40px] sm:min-h-[80px] print:min-h-[60px]">
+                            {session ? session.discipline : 'ACCES LIBRE'}
+                          </div>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+                {/* Ligne des coachs */}
+                <tr>
+                  <td className="py-2 px-1 border-r border-gray-300 font-medium bg-gray-50 print:p-2"></td>
+                  {weekDates.map(date => (
+                    <td 
+                      key={date} 
+                      className={`border-r border-gray-300 font-bold uppercase tracking-wide py-2 px-1 text-xs sm:text-sm print:text-xs ${assignedCoach ? (COACH_COLORS[assignedCoach] || 'bg-gray-200 text-gray-800') : 'bg-white'}`}
+                    >
+                      {assignedCoach || ''}
+                    </td>
+                  ))}
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        ))}
       </div>
     );
   };
