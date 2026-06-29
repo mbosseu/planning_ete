@@ -47,7 +47,7 @@ export function MembersSchedule() {
         <table className="w-full text-center border-collapse">
           <thead>
             <tr>
-              <th colSpan={dates.length + 1} className="relative py-8 px-8 bg-[#1c2646] border-b-2 border-gray-800">
+              <th colSpan={dates.length + 1} className="relative py-8 px-8 bg-[#1c2646] border-b-4 border-[#c59e5e]">
                 {/* Background Boxers Image Placeholder / Effect */}
                 <div className="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?q=80&w=2000')] bg-cover bg-center mix-blend-overlay"></div>
                 <div className="relative z-10 flex justify-between items-center">
@@ -55,15 +55,18 @@ export function MembersSchedule() {
                     <div className="text-white text-3xl md:text-5xl font-sans font-black uppercase tracking-widest">
                       SALLE <span className="text-[#c59e5e]">{room}</span>
                     </div>
+                    <div className="text-white/80 text-xl font-bold mt-2 uppercase tracking-wide">
+                      {memberPeriods.find(p => p.id === activePeriodId)?.name}
+                    </div>
                   </div>
                   <img src="/logo.png" alt="Boxing Center" className="h-16 md:h-20 object-contain drop-shadow-2xl" />
                 </div>
               </th>
             </tr>
             <tr>
-              <th className="border border-gray-800 w-28 bg-[#2a4365] print:p-2"></th>
+              <th className="border-r border-gray-800 w-28 bg-[#2a4365] print:p-2"></th>
               {dates.map(date => (
-                <th key={date} className="py-4 px-2 border border-gray-800 font-bold uppercase bg-[#2a4365] text-white text-sm tracking-widest">
+                <th key={date} className="py-4 px-2 border-l border-gray-800 font-bold uppercase bg-[#2a4365] text-white text-sm tracking-widest">
                   {format(parseISO(date), 'EEEE', { locale: fr })}
                 </th>
               ))}
@@ -72,7 +75,7 @@ export function MembersSchedule() {
           <tbody>
             {TIME_SLOTS.map(slot => (
               <tr key={slot.id}>
-                <td className="py-3 px-2 border border-gray-800 font-bold text-white bg-[#3182ce] text-sm whitespace-nowrap">
+                <td className="py-3 px-2 border-t border-r border-gray-800 font-bold text-white bg-[#3182ce] text-sm whitespace-nowrap">
                   {slot.startTime}-{slot.endTime}
                 </td>
                 {dates.map(date => {
@@ -82,8 +85,8 @@ export function MembersSchedule() {
                   
                   if (session) {
                     if (session.discipline === 'Pause') {
-                      bgClass = DISCIPLINE_COLORS['Pause'];
-                      content = "FERMETURE";
+                      bgClass = 'bg-[#1f2937] text-gray-500';
+                      content = "-";
                     } else if (session.discipline === 'Accès libre') {
                       bgClass = DISCIPLINE_COLORS['ACCÈS LIBRE'];
                       content = "ACCÈS LIBRE";
@@ -94,7 +97,7 @@ export function MembersSchedule() {
                   }
                   
                   return (
-                    <td key={date} className={`border border-gray-800 font-black uppercase tracking-widest text-xs sm:text-sm p-0 m-0 ${bgClass}`}>
+                    <td key={date} className={`border-t border-l border-gray-800 font-black uppercase tracking-widest text-xs sm:text-sm p-0 m-0 ${bgClass}`}>
                       <div className="w-full h-full flex items-center justify-center min-h-[70px] px-2 py-4">
                         {content}
                       </div>
