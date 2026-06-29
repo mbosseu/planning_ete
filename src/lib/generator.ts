@@ -26,44 +26,44 @@ export function generateScheduleForPeriod(period: Period, existingSessions: Clas
     // To avoid all rooms having the same discipline at the same time:
     // We can offset the discipline index by room index and day index.
     
-    ROOMS.forEach((room, roomIndex) => {
-      // Find which coach is assigned to this room in this period
-      const assignedCoachEntry = Object.entries(period.coachAssignments).find(([_, assignedRoom]) => assignedRoom === room);
-      const coach = assignedCoachEntry ? (assignedCoachEntry[0] as CoachName) : null;
-      
-      if (!coach) return; // No coach assigned to this room, skip generating classes here
+      ROOMS.forEach((room, roomIndex) => {
+        // Find which coach is assigned to this room in this period
+        const assignedCoachEntry = Object.entries(period.coachAssignments).find(([_, assignedRoom]) => assignedRoom === room);
+        const coach = assignedCoachEntry ? (assignedCoachEntry[0] as CoachName) : null;
+        
+        if (!coach && period.id !== 'p2') return; // No coach assigned, unless it's p2 (accès libre)
 
-      TIME_SLOTS.forEach((slot, slotIndex) => {
-        if (slot.isTraining) {
-          // Simple heuristic to alternate disciplines
-          const disciplineIndex = (dayIndex + roomIndex + slotIndex) % DISCIPLINES.length;
-          const discipline = DISCIPLINES[disciplineIndex];
+        TIME_SLOTS.forEach((slot, slotIndex) => {
+          if (slot.isTraining) {
+            // Simple heuristic to alternate disciplines
+            const disciplineIndex = (dayIndex + roomIndex + slotIndex) % DISCIPLINES.length;
+            const discipline = period.id === 'p2' ? 'Accès libre' : DISCIPLINES[disciplineIndex];
 
-          sessions.push({
-            id: `session-${period.id}-${room}-${dateStr}-${slot.id}`,
-            periodId: period.id,
-            date: dateStr,
-            timeSlotId: slot.id,
-            roomId: room,
-            coachId: coach,
-            discipline: discipline,
-            isPermanence: false
-          });
-        } else {
-          const isPause = slot.id === 'ts-pause-1';
-          sessions.push({
-            id: `perm-${period.id}-${coach}-${dateStr}-${slot.id}`,
-            periodId: period.id,
-            date: dateStr,
-            timeSlotId: slot.id,
-            roomId: room,
-            coachId: coach,
-            discipline: isPause ? 'Pause' : 'Permanence',
-            isPermanence: !isPause // For stats, Pause is not permanence
-          });
-        }
+            sessions.push({
+              id: `session-${period.id}-${room}-${dateStr}-${slot.id}`,
+              periodId: period.id,
+              date: dateStr,
+              timeSlotId: slot.id,
+              roomId: room,
+              coachId: coach,
+              discipline: discipline,
+              isPermanence: false
+            });
+          } else {
+            const isPause = slot.id === 'ts-pause-1';
+            sessions.push({
+              id: `perm-${period.id}-${coach || 'none'}-${dateStr}-${slot.id}`,
+              periodId: period.id,
+              date: dateStr,
+              timeSlotId: slot.id,
+              roomId: room,
+              coachId: coach,
+              discipline: isPause ? 'Pause' : (period.id === 'p2' ? 'Accès libre' : 'Permanence'),
+              isPermanence: !isPause // For stats, Pause is not permanence
+            });
+          }
+        });
       });
-    });
   });
 
   return sessions;

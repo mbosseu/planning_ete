@@ -9,7 +9,7 @@ export function Dashboard() {
   const sessions = useStore(sessionsStore);
   const periods = useStore(periodsStore);
 
-  const totalClasses = sessions.filter(s => !s.isPermanence).length;
+  const totalClasses = sessions.filter(s => !s.isPermanence && s.discipline !== 'Pause').length;
   const totalPermanences = sessions.filter(s => s.isPermanence).length;
 
   const coachStats = COACHES.map(coach => {
@@ -35,7 +35,10 @@ export function Dashboard() {
         classesHours += duration;
       }
     });
-    const coachPeriods = periods.filter(p => Object.values(p.coachAssignments).includes(coach as any));
+    const coachPeriods = periods.filter(p => {
+      const assignedRoom = p.coachAssignments[coach as keyof typeof p.coachAssignments];
+      return assignedRoom !== null && assignedRoom !== undefined;
+    });
     let daysAssigned = 0;
     coachPeriods.forEach(p => {
       const start = new Date(p.startDate);
