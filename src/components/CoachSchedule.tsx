@@ -95,7 +95,7 @@ export function CoachSchedule() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 print:space-y-0 print:m-0 print:p-0">
       <div className="print:hidden flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
         <div className="flex gap-2 overflow-x-auto max-w-full pb-2">
           {COACHES.map(c => (
@@ -156,12 +156,18 @@ export function CoachSchedule() {
       ) : (
         <>
           <div id="coach-schedule-table">
+            <h2 className="hidden print:block text-2xl font-bold text-center mb-4 pb-2 border-b-2 border-gray-200">
+              Planning Coach : {activeCoach} - {activePeriod?.name}
+            </h2>
             {renderTable(activeCoach)}
           </div>
           
           <div id="all-schedules" className="hidden print:block">
             {COACHES.map((coach, idx) => (
               <div key={coach} className={idx < COACHES.length - 1 ? "print-page-break" : ""}>
+                <h2 className="text-2xl font-bold text-center mb-4 pb-2 border-b-2 border-gray-200">
+                  Planning Coach : {coach} - {activePeriod?.name}
+                </h2>
                 {renderTable(coach)}
               </div>
             ))}

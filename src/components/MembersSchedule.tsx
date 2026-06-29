@@ -101,7 +101,7 @@ export function MembersSchedule() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 print:space-y-0 print:m-0 print:p-0">
       <div className="print:hidden flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
         <div className="flex gap-2 overflow-x-auto max-w-full pb-2">
           {ROOMS.map(r => (
@@ -161,12 +161,18 @@ export function MembersSchedule() {
       ) : (
         <>
           <div id="members-schedule-table">
+            <h2 className="hidden print:block text-2xl font-bold text-center mb-4 pb-2 border-b-2 border-gray-200">
+              Planning Salle : {activeRoom} - {activePeriod?.name}
+            </h2>
             {renderTable(activeRoom)}
           </div>
           
           <div id="all-schedules" className="hidden print:block">
             {ROOMS.map((room, idx) => (
               <div key={room} className={idx < ROOMS.length - 1 ? "print-page-break" : ""}>
+                <h2 className="text-2xl font-bold text-center mb-4 pb-2 border-b-2 border-gray-200">
+                  Planning Salle : {room} - {activePeriod?.name}
+                </h2>
                 {renderTable(room)}
               </div>
             ))}

@@ -20,12 +20,12 @@ export function App() {
   if (!isClient) return null;
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-12 print:space-y-0 print:m-0 print:p-0">
       <div className="print:hidden">
         <Dashboard />
       </div>
       
-      <div className="space-y-6">
+      <div className="space-y-6 print:space-y-0 print:m-0 print:p-0">
         <div className="print:hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <h2 className="text-2xl font-bold">Vues du Planning</h2>
           <div className="flex flex-wrap w-full sm:w-auto bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
