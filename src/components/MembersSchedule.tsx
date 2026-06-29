@@ -102,7 +102,7 @@ export function MembersSchedule() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+      <div className="print:hidden flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
         <div className="flex gap-2 overflow-x-auto max-w-full pb-2">
           {ROOMS.map(r => (
             <button
@@ -120,7 +120,7 @@ export function MembersSchedule() {
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="print:hidden flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="flex gap-2 overflow-x-auto pb-2 w-full sm:w-auto">
           {periods.map(p => (
             <button

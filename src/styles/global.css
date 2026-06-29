@@ -3,45 +3,28 @@
 @media print {
   @page {
     size: landscape;
-    margin: 0.5cm; /* Small margin, removes browser headers/footers */
-  }
-
-  /* Hide everything by default during print if a print target is set */
-  body[data-print-target] * {
-    visibility: hidden;
-  }
-  
-  /* Make only the target visible */
-  body[data-print-target="members-schedule-table"] #members-schedule-table,
-  body[data-print-target="members-schedule-table"] #members-schedule-table *,
-  body[data-print-target="coach-schedule-table"] #coach-schedule-table,
-  body[data-print-target="coach-schedule-table"] #coach-schedule-table *,
-  body[data-print-target="all-schedules"] #all-schedules,
-  body[data-print-target="all-schedules"] #all-schedules * {
-    visibility: visible;
-  }
-
-  /* Position it at the top left of the page, remove scrollbars */
-  body[data-print-target="members-schedule-table"] #members-schedule-table,
-  body[data-print-target="coach-schedule-table"] #coach-schedule-table,
-  body[data-print-target="all-schedules"] #all-schedules {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow: visible !important; /* No scrollbars on PDF */
+    margin: 0.5cm;
   }
 
   body[data-print-target] {
-    zoom: 0.65; /* Use zoom instead of transform so pagination works perfectly */
+    zoom: 0.65;
+  }
+
+  /* When printing all-schedules, hide the individual tables */
+  body[data-print-target="all-schedules"] #members-schedule-table,
+  body[data-print-target="all-schedules"] #coach-schedule-table {
+    display: none !important;
+  }
+
+  /* When printing individual tables, hide all-schedules */
+  body[data-print-target="members-schedule-table"] #all-schedules,
+  body[data-print-target="coach-schedule-table"] #all-schedules {
+    display: none !important;
   }
 
   .print-page-break {
     page-break-after: always;
     break-after: page;
-    margin-bottom: 2cm;
   }
 
   /* Force browsers to print background colors exactly as they appear */
