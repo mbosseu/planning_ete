@@ -90,9 +90,24 @@ export function MembersSchedule() {
                       let cellClass = "bg-white";
                       
                       if (session) {
-                        const isPerm = session.isPermanence || session.discipline === 'ACCES LIBRE' || session.discipline === 'Pause';
-                        cellClass = isPerm ? 'bg-[#c59e5e]/10 text-[#1c2646]' : 'bg-white text-[#1c2646]';
-                        content = <span className="font-bold text-sm">{session.discipline}</span>;
+                        const isPerm = session.isPermanence || session.discipline === 'ACCES LIBRE';
+                        
+                        let bgClass = 'bg-[#1c2646]/10 text-[#1c2646]';
+                        let textTitleClass = '';
+                        
+                        if (session.discipline === 'Pause') {
+                          bgClass = 'bg-gray-100 text-gray-500';
+                        } else if (isPerm || session.discipline === 'Permanence') {
+                          bgClass = 'bg-[#c59e5e]/15 text-[#1c2646] border-l-4 border-l-[#c59e5e]';
+                        } else if (session.discipline === 'Boxe anglaise') {
+                          bgClass = 'bg-[#1c2646]/10 text-[#1c2646] border-l-4 border-l-[#1c2646]';
+                        } else if (session.discipline === 'Boxing Camp') {
+                          bgClass = 'bg-[#8B1E28]/10 text-[#1c2646] border-l-4 border-l-[#8B1E28]';
+                          textTitleClass = 'text-[#8B1E28]';
+                        }
+                        
+                        cellClass = bgClass;
+                        content = <span className={`font-bold text-sm ${textTitleClass}`}>{session.discipline}</span>;
                       } else {
                         cellClass = 'bg-[#1c2646]/5 text-[#1c2646]/60';
                         content = <span className="font-semibold text-xs tracking-wide">ACCÈS LIBRE</span>;

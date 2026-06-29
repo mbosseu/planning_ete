@@ -72,29 +72,55 @@ export function MasterSchedule() {
                         <h3 className="font-sans font-bold text-lg uppercase tracking-wider text-[#1c2646] border-b-2 border-gray-100 pb-2">
                           <span className="text-[#c59e5e] mr-2">/</span> {room}
                         </h3>
-                        {roomSessions.map(session => (
-                          <div 
-                            key={session.id} 
-                            className={`p-4 rounded-xl border-l-[6px] shadow-sm transition-transform hover:-translate-y-1 ${
-                              session.isPermanence || session.discipline === 'ACCES LIBRE' || session.discipline === 'Pause'
-                                ? 'bg-[#c59e5e]/10 border-[#c59e5e] text-[#1c2646]'
-                                : 'bg-white border-[#1c2646] text-[#1c2646]'
-                            }`}
-                          >
-                            <div className="font-black text-lg tracking-wide">
-                              {session.isPermanence ? 'PERMANENCE' : session.timeSlotId}
-                            </div>
-                            <div className="text-[#1c2646]/70 uppercase font-bold mt-1 text-sm">
-                              {session.discipline}
-                            </div>
-                            <div className="mt-4 flex items-center gap-3 pt-3 border-t border-gray-100">
-                              <div className="w-8 h-8 rounded-lg bg-[#1c2646] flex items-center justify-center text-sm font-bold text-white shadow-md">
-                                {session.coachId ? session.coachId.charAt(0) : '?'}
+                        {roomSessions.map(session => {
+                          const isPerm = session.isPermanence || session.discipline === 'ACCES LIBRE';
+                          let bgClass = 'bg-white';
+                          let borderClass = 'border-[#1c2646]';
+                          let badgeClass = 'bg-[#1c2646]';
+                          let textClass = 'text-[#1c2646]';
+                          
+                          if (session.discipline === 'Pause') {
+                            bgClass = 'bg-gray-100';
+                            borderClass = 'border-gray-300';
+                            badgeClass = 'bg-gray-400';
+                            textClass = 'text-gray-500';
+                          } else if (isPerm || session.discipline === 'Permanence') {
+                            bgClass = 'bg-[#c59e5e]/15';
+                            borderClass = 'border-[#c59e5e]';
+                            badgeClass = 'bg-[#c59e5e]';
+                            textClass = 'text-[#1c2646]';
+                          } else if (session.discipline === 'Boxe anglaise') {
+                            bgClass = 'bg-[#1c2646]/10';
+                            borderClass = 'border-[#1c2646]';
+                            badgeClass = 'bg-[#1c2646]';
+                            textClass = 'text-[#1c2646]';
+                          } else if (session.discipline === 'Boxing Camp') {
+                            bgClass = 'bg-[#8B1E28]/10'; // Ruby Red
+                            borderClass = 'border-[#8B1E28]';
+                            badgeClass = 'bg-[#8B1E28]';
+                            textClass = 'text-[#1c2646]';
+                          }
+
+                          return (
+                            <div 
+                              key={session.id} 
+                              className={`p-4 rounded-xl border-l-[6px] shadow-sm transition-transform hover:-translate-y-1 ${bgClass} ${borderClass} ${textClass}`}
+                            >
+                              <div className="font-black text-lg tracking-wide">
+                                {isPerm ? 'PERMANENCE' : session.timeSlotId}
                               </div>
-                              <span className="font-bold text-sm uppercase">{session.coachId || 'Aucun'}</span>
+                              <div className={`uppercase font-bold mt-1 text-sm ${session.discipline === 'Boxing Camp' ? 'text-[#8B1E28]' : 'opacity-80'}`}>
+                                {session.discipline}
+                              </div>
+                              <div className={`mt-4 flex items-center gap-3 pt-3 border-t ${session.discipline === 'Boxing Camp' ? 'border-[#8B1E28]/20' : 'border-gray-200'}`}>
+                                <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold text-white shadow-md ${badgeClass}`}>
+                                  {session.coachId ? session.coachId.charAt(0) : '?'}
+                                </div>
+                                <span className="font-bold text-sm uppercase">{session.coachId || 'Aucun'}</span>
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     );
                   })}
