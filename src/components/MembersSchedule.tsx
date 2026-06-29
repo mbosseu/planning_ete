@@ -13,7 +13,7 @@ const DISCIPLINE_COLORS: Record<string, string> = {
   'Boxing Camp': 'bg-[#b91c1c] text-white',
   'Permanence': 'bg-[#065f46] text-white',
   'ACCÈS LIBRE': 'bg-[#111827] text-gray-400',
-  'Pause': 'bg-[#1f2937] text-transparent',
+  'Pause': 'bg-[#1f2937] text-gray-500',
 };
 
 export function MembersSchedule() {
@@ -83,7 +83,7 @@ export function MembersSchedule() {
                   if (session) {
                     if (session.discipline === 'Pause') {
                       bgClass = DISCIPLINE_COLORS['Pause'];
-                      content = "";
+                      content = "FERMETURE";
                     } else if (session.discipline === 'Accès libre') {
                       bgClass = DISCIPLINE_COLORS['ACCÈS LIBRE'];
                       content = "ACCÈS LIBRE";
