@@ -8,11 +8,14 @@ export const exportToPDF = async (elementId: string, filename: string) => {
   // We add a specific class to body to know which table to print
   document.body.setAttribute('data-print-target', elementId);
   
-  // Trigger native print dialog which allows saving as PDF perfectly
-  window.print();
-  
-  // Clean up
+  // We MUST yield to the browser's rendering engine so it can apply CSS
+  // (display: block, page breaks, etc.) BEFORE freezing the thread with print()
   setTimeout(() => {
-    document.body.removeAttribute('data-print-target');
-  }, 1000);
+    window.print();
+    
+    // Clean up after print dialog closes
+    setTimeout(() => {
+      document.body.removeAttribute('data-print-target');
+    }, 1000);
+  }, 150);
 };

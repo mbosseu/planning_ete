@@ -6,32 +6,23 @@ import puppeteer from 'puppeteer';
     const page = await browser.newPage();
     
     console.log("Navigating to site...");
-    await page.goto('http://localhost:4321', { waitUntil: 'networkidle0' });
+    await page.goto('http://127.0.0.1:4321', { waitUntil: 'networkidle0' });
     
-    // Set the body attribute to simulate exportToPDF for "all-schedules"
-    console.log("Triggering print styling...");
+    console.log("Setting data-print-target to all-schedules...");
     await page.evaluate(() => {
-      // Create a simulated all-schedules block since React needs click to render it
-      // Let's just click the TOUT IMPRIMER button, but mock window.print first!
-      window.print = () => { console.log('Mocked window.print called'); };
-      
-      const buttons = Array.from(document.querySelectorAll('button'));
-      const printBtn = buttons.find(b => b.textContent && b.textContent.includes('TOUT IMPRIMER'));
-      if (printBtn) printBtn.click();
+      document.body.setAttribute('data-print-target', 'all-schedules');
     });
     
-    // Wait for React to render tables (300ms) and set data-print-target
+    console.log("Emulating print media...");
+    await page.emulateMediaType('print');
+    
+    // Give time for layout
     await new Promise(r => setTimeout(r, 1000));
     
-    // Check if data-print-target is set
-    const targetSet = await page.evaluate(() => document.body.getAttribute('data-print-target'));
-    console.log("data-print-target:", targetSet);
-    
-    // Force CSS media to print to evaluate layout visually in screenshot
-    await page.emulateMediaType('print');
+    console.log("Taking screenshot...");
     await page.screenshot({ path: 'test-print-preview.png', fullPage: true });
     
-    // Generate actual PDF
+    console.log("Generating PDF...");
     await page.pdf({
       path: 'test-print.pdf',
       format: 'A4',
