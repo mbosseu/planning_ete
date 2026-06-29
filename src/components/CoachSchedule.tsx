@@ -27,6 +27,9 @@ export function CoachSchedule() {
   const [activeCoach, setActiveCoach] = useState<CoachName>(COACHES[0]);
   const [activePeriodId, setActivePeriodId] = useState(periods[0]?.id);
   
+  const activePeriod = periods.find(p => p.id === activePeriodId);
+  const dates = Array.from(new Set(sessions.filter(s => s.periodId === activePeriodId).map(s => s.date))).sort();
+  
   const handlePrintAll = () => {
     exportToPDF('all-schedules', `Plannings_Coachs_Tous_${activePeriod?.name || ''}`);
   };
