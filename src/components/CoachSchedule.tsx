@@ -46,23 +46,18 @@ export function CoachSchedule() {
     return (
       <div className="space-y-8 print:space-y-6">
         {weeks.map((weekDates, weekIdx) => (
-          <div key={weekIdx} className="overflow-x-auto print:overflow-visible">
-            
-            <div className="text-center mb-6">
-              <h2 className="text-brand-gold font-oswald uppercase tracking-[0.2em] text-sm mb-2">Planning d'encadrement</h2>
-              <h1 className="text-5xl font-oswald font-bold uppercase text-white tracking-wider">
-                COACH : {coach}
-              </h1>
-            </div>
-
-            <table className="w-full text-center border-separate border-spacing-y-2 border-spacing-x-2 text-sm text-gray-900" style={{ minWidth: '800px' }}>
+          <div key={weekIdx} className="overflow-x-auto print:overflow-visible border border-gray-300 bg-white rounded-lg shadow-sm">
+            <table className="w-full text-center border-collapse text-sm text-gray-900">
               <thead>
                 <tr>
-                  <th className="w-24 bg-dark-surface-time text-white/50 text-xs font-bold uppercase tracking-wider p-2 rounded-l-md">
-                    Horaire
+                  <th colSpan={weekDates.length + 1} className="py-4 text-2xl font-oswald uppercase tracking-widest border-b border-brand-navy bg-brand-navy text-brand-gold">
+                    Coach : {coach} <span className="text-white/80 font-sans tracking-normal ml-2 text-lg">({activePeriod?.name} - Semaine {weekIdx + 1})</span>
                   </th>
+                </tr>
+                <tr>
+                  <th className="border-r border-b border-gray-300 w-24 bg-gray-100 print:p-2"></th>
                   {weekDates.map(date => (
-                    <th key={date} className="py-3 px-1 font-oswald font-bold tracking-widest uppercase bg-dark-surface-header text-white text-sm rounded-md shadow-sm">
+                    <th key={date} className="py-3 px-1 border-r border-b border-gray-300 font-bold uppercase bg-gray-100 text-brand-navy text-xs sm:text-sm print:text-xs">
                       {format(parseISO(date), 'EEEE', { locale: fr })}
                     </th>
                   ))}
@@ -71,23 +66,20 @@ export function CoachSchedule() {
               <tbody>
                 {TIME_SLOTS.map(slot => (
                   <tr key={slot.id}>
-                    <td className="py-2 px-1 bg-dark-surface-time text-white/70 font-oswald font-bold text-xs rounded-l-md border-r-4 border-dark-bg">
-                      {slot.label.replace('h00', 'h').replace(' - ', '-')}
+                    <td className="py-2 px-1 border-r border-b border-gray-300 font-medium bg-gray-50 text-xs sm:text-sm print:text-xs">
+                      {slot.label}
                     </td>
                     {weekDates.map(date => {
                       const session = coachSessions.find(s => s.date === date && s.timeSlotId === slot.id);
-                      
-                      const cellClass = session 
-                        ? 'bg-brand-navy text-white border-b-4 border-brand-gold shadow-md'
-                        : 'bg-dark-surface text-white/10 border-b border-white/5';
+                      const colorClass = session ? (DISCIPLINE_COLORS[session.discipline] || 'bg-gray-200 text-gray-800') : 'bg-white text-gray-600';
                       
                       return (
-                        <td key={date} className={`rounded-md p-1 font-bold uppercase tracking-wide text-xs sm:text-sm print:text-xs ${cellClass}`}>
-                          <div className="w-full h-full p-2 flex flex-col items-center justify-center min-h-[60px] sm:min-h-[80px]">
+                        <td key={date} className={`border-r border-b border-gray-300 font-bold uppercase tracking-wide text-xs sm:text-sm print:text-xs ${colorClass}`}>
+                          <div className="w-full h-full p-2 sm:p-4 print:p-2 flex flex-col items-center justify-center min-h-[40px] sm:min-h-[80px] print:min-h-[60px]">
                             {session ? (
                               <>
-                                <span className="font-oswald tracking-wide leading-tight text-brand-gold">{session.discipline}</span>
-                                <span className="text-[10px] sm:text-xs opacity-75 font-sans font-medium mt-1 tracking-widest">{session.roomId}</span>
+                                <span>{session.discipline}</span>
+                                <span className="text-[10px] sm:text-[11px] opacity-90 mt-1">{session.roomId}</span>
                               </>
                             ) : '-'}
                           </div>
@@ -98,13 +90,11 @@ export function CoachSchedule() {
                 ))}
                 {/* Ligne des Salles */}
                 <tr>
-                  <td className="py-2 px-1 bg-dark-surface-time text-white/50 font-oswald font-bold text-xs rounded-l-md">
-                    SALLE
-                  </td>
+                  <td className="py-2 px-1 border-r border-gray-300 font-medium bg-gray-50 print:p-2"></td>
                   {weekDates.map(date => (
                     <td 
                       key={date} 
-                      className={`rounded-md p-1 font-bold uppercase tracking-wide py-2 px-1 text-xs sm:text-sm print:text-xs ${assignedRoom ? 'bg-dark-surface-header text-white shadow-sm' : 'bg-dark-surface text-white/10'}`}
+                      className={`border-r border-gray-300 font-bold uppercase tracking-wide py-2 px-1 text-xs sm:text-sm print:text-xs ${assignedRoom ? (ROOM_COLORS[assignedRoom] || 'bg-gray-200 text-gray-800') : 'bg-white'}`}
                     >
                       {assignedRoom || ''}
                     </td>
@@ -129,7 +119,7 @@ export function CoachSchedule() {
               className={`px-5 py-2 rounded-lg text-sm font-bold uppercase tracking-wider whitespace-nowrap transition-colors border-2 ${
                 activeCoach === c 
                   ? 'bg-brand-navy border-brand-navy text-brand-gold shadow-md' 
-                  : 'bg-dark-surface text-white/60 border-white/10 hover:border-white/30 hover:text-white'
+                  : 'bg-white text-brand-navy/60 border-gray-200 hover:border-brand-navy/50 hover:text-brand-navy'
               }`}
             >
               {c.toUpperCase()}
@@ -147,7 +137,7 @@ export function CoachSchedule() {
               className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide whitespace-nowrap transition-colors border-2 ${
                 activePeriodId === p.id 
                   ? 'bg-brand-navy border-brand-navy text-brand-gold shadow-md' 
-                  : 'bg-dark-surface text-white/60 border-white/10 hover:border-white/30 hover:text-white'
+                  : 'bg-white text-brand-navy/60 border-gray-200 hover:border-brand-navy/50 hover:text-brand-navy'
               }`}
             >
               {p.name}

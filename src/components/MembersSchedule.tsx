@@ -8,6 +8,21 @@ import type { Room } from '../lib/types';
 import { exportToPDF } from '../lib/exportPdf';
 import type { Room } from '../lib/types';
 
+const DISCIPLINE_COLORS: Record<string, string> = {
+  'Boxe anglaise': 'bg-red-600 text-white',
+  'Boxing Camp': 'bg-purple-700 text-white',
+  'Permanence': 'bg-emerald-500 text-white',
+};
+
+const COACH_COLORS: Record<string, string> = {
+  'Mehdi': 'bg-blue-600 text-white',
+  'Dadi': 'bg-red-700 text-white',
+  'Walid': 'bg-green-600 text-white',
+  'Faye': 'bg-orange-500 text-white',
+  'Valentin Gutt': 'bg-gray-500 text-white',
+  'Renaud': 'bg-indigo-600 text-white',
+};
+
 export function MembersSchedule() {
   const sessions = useStore(sessionsStore);
   const periods = useStore(periodsStore);
@@ -22,41 +37,12 @@ export function MembersSchedule() {
     exportToPDF('all-schedules', `Plannings_Adherents_Toutes_Salles_${activePeriod?.name || ''}`);
   };
 
-  const getCoachColorClass = (coachName: string) => {
-    switch(coachName) {
-      case 'Dadi': return 'bg-amber-500 text-black border-amber-600';
-      case 'Hicham': return 'bg-sky-400 text-black border-sky-500';
-      case 'Tawee': return 'bg-red-500 text-white border-red-600';
-      case 'Victor G': return 'bg-emerald-500 text-black border-emerald-600';
-      case 'Mehdi': return 'bg-indigo-500 text-white border-indigo-600';
-      case 'Walid': return 'bg-pink-500 text-white border-pink-600';
-      case 'Faye': return 'bg-purple-500 text-white border-purple-600';
-      case 'Renaud': return 'bg-orange-500 text-white border-orange-600';
-      case 'Valentin Gutt': return 'bg-slate-500 text-white border-slate-600';
-      default: return 'bg-gray-300 text-gray-800 border-gray-400';
-    }
-  };
-
-  const getCoachDotColor = (coachName: string) => {
-    switch(coachName) {
-      case 'Dadi': return 'bg-amber-500';
-      case 'Hicham': return 'bg-sky-400';
-      case 'Tawee': return 'bg-red-500';
-      case 'Victor G': return 'bg-emerald-500';
-      case 'Mehdi': return 'bg-indigo-500';
-      case 'Walid': return 'bg-pink-500';
-      case 'Faye': return 'bg-purple-500';
-      case 'Renaud': return 'bg-orange-500';
-      case 'Valentin Gutt': return 'bg-slate-500';
-      default: return 'bg-gray-400';
-    }
-  };
-
   const renderTable = (room: string) => {
     const roomSessions = sessions.filter(s => s.periodId === activePeriodId && s.roomId === room && !s.isPermanence);
     
-    // Determine coaches present in this room's schedule to show in legend
-    const coachesInRoom = Array.from(new Set(roomSessions.filter(s => s.coachId).map(s => s.coachId)));
+    // Determine coach for the room in this period
+    const assignedCoachEntry = activePeriod ? Object.entries(activePeriod.coachAssignments).find(([_, r]) => r === room) : null;
+    const assignedCoach = assignedCoachEntry ? assignedCoachEntry[0] : null;
 
     const weeks = [];
     for (let i = 0; i < dates.length; i += 5) {
@@ -66,23 +52,18 @@ export function MembersSchedule() {
     return (
       <div className="space-y-8 print:space-y-6">
         {weeks.map((weekDates, weekIdx) => (
-          <div key={weekIdx} className="overflow-x-auto print:overflow-visible">
-            
-            <div className="text-center mb-6">
-              <h2 className="text-brand-gold font-oswald uppercase tracking-[0.2em] text-sm mb-2">Planning des cours</h2>
-              <h1 className="text-5xl font-oswald font-bold uppercase text-white tracking-wider">
-                {room}
-              </h1>
-            </div>
-
-            <table className="w-full text-center border-separate border-spacing-y-2 border-spacing-x-2 text-sm text-gray-900" style={{ minWidth: '800px' }}>
+          <div key={weekIdx} className="overflow-x-auto print:overflow-visible border border-gray-300 bg-white rounded-lg shadow-sm">
+            <table className="w-full text-center border-collapse text-sm text-gray-900">
               <thead>
                 <tr>
-                  <th className="w-24 bg-dark-surface-time text-white/50 text-xs font-bold uppercase tracking-wider p-2 rounded-l-md">
-                    Horaire
+                  <th colSpan={weekDates.length + 1} className="py-4 text-2xl font-oswald uppercase tracking-widest border-b border-brand-navy bg-brand-navy text-brand-gold">
+                    {room} <span className="text-white/80 font-sans tracking-normal ml-2 text-lg">({activePeriod?.name} - Semaine {weekIdx + 1})</span>
                   </th>
+                </tr>
+                <tr>
+                  <th className="border-r border-b border-gray-300 w-24 bg-gray-100 print:p-2"></th>
                   {weekDates.map(date => (
-                    <th key={date} className="py-3 px-1 font-oswald font-bold tracking-widest uppercase bg-dark-surface-header text-white text-sm rounded-md shadow-sm">
+                    <th key={date} className="py-3 px-1 border-r border-b border-gray-300 font-bold uppercase bg-gray-100 text-brand-navy text-xs sm:text-sm print:text-xs">
                       {format(parseISO(date), 'EEEE', { locale: fr })}
                     </th>
                   ))}
@@ -91,31 +72,17 @@ export function MembersSchedule() {
               <tbody>
                 {TIME_SLOTS.map(slot => (
                   <tr key={slot.id}>
-                    <td className="py-2 px-1 bg-dark-surface-time text-white/70 font-oswald font-bold text-xs rounded-l-md border-r-4 border-dark-bg">
-                      {slot.label.replace('h00', 'h').replace(' - ', '-')}
+                    <td className="py-2 px-1 border-r border-b border-gray-300 font-medium bg-gray-100 text-brand-navy text-xs sm:text-sm print:text-xs">
+                      {slot.label}
                     </td>
                     {weekDates.map(date => {
                       const session = roomSessions.find(s => s.date === date && s.timeSlotId === slot.id);
-                      
-                      const isFreeAccess = !session || session.discipline === 'ACCES LIBRE' || session.discipline === 'Pause';
-                      
-                      const cellClass = isFreeAccess 
-                        ? 'bg-dark-surface text-white/30 border-b border-white/5'
-                        : `${getCoachColorClass(session.coachId)} border-b-4 shadow-md`;
+                      const colorClass = session ? (DISCIPLINE_COLORS[session.discipline] || 'bg-gray-200 text-gray-800') : 'bg-white text-gray-600';
                       
                       return (
-                        <td key={date} className={`rounded-md p-1 font-bold uppercase tracking-wide text-xs sm:text-sm print:text-xs ${cellClass}`}>
-                          <div className="w-full h-full p-2 flex flex-col items-center justify-center min-h-[60px] sm:min-h-[80px]">
-                            {isFreeAccess ? (
-                              <span className="font-sans font-medium text-xs tracking-wider">ACCÈS LIBRE</span>
-                            ) : (
-                              <>
-                                <span className="font-oswald tracking-wide leading-tight">{session.discipline}</span>
-                                {session.coachId && (
-                                  <span className="text-[10px] sm:text-xs opacity-75 font-sans font-medium mt-1 tracking-widest">{session.coachId}</span>
-                                )}
-                              </>
-                            )}
+                        <td key={date} className={`border-r border-b border-gray-300 font-bold uppercase tracking-wide text-xs sm:text-sm print:text-xs ${colorClass}`}>
+                          <div className="w-full h-full p-2 sm:p-4 print:p-2 flex items-center justify-center min-h-[40px] sm:min-h-[80px] print:min-h-[60px]">
+                            {session ? session.discipline : 'ACCES LIBRE'}
                           </div>
                         </td>
                       );
@@ -124,19 +91,6 @@ export function MembersSchedule() {
                 ))}
               </tbody>
             </table>
-
-            {/* Légende des coachs */}
-            {coachesInRoom.length > 0 && (
-              <div className="mt-6 flex flex-wrap items-center justify-center gap-6 print:hidden">
-                {coachesInRoom.map(coach => (
-                  <div key={coach} className="flex items-center gap-2 bg-dark-surface px-4 py-2 rounded-full border border-white/10 shadow-sm">
-                    <span className={`w-3 h-3 rounded-full ${getCoachDotColor(coach)}`}></span>
-                    <span className="text-white font-bold text-xs uppercase tracking-wider">{coach}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-
           </div>
         ))}
       </div>
@@ -154,7 +108,7 @@ export function MembersSchedule() {
               className={`px-5 py-2 rounded-lg text-sm font-bold uppercase tracking-wider whitespace-nowrap transition-colors border-2 ${
                 activeRoom === r 
                   ? 'bg-brand-navy border-brand-navy text-brand-gold shadow-md' 
-                  : 'bg-dark-surface text-white/60 border-white/10 hover:border-white/30 hover:text-white'
+                  : 'bg-white text-brand-navy/60 border-gray-200 hover:border-brand-navy/50 hover:text-brand-navy'
               }`}
             >
               {r.toUpperCase()}
@@ -172,7 +126,7 @@ export function MembersSchedule() {
               className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide whitespace-nowrap transition-colors border-2 ${
                 activePeriodId === p.id 
                   ? 'bg-brand-navy border-brand-navy text-brand-gold shadow-md' 
-                  : 'bg-dark-surface text-white/60 border-white/10 hover:border-white/30 hover:text-white'
+                  : 'bg-white text-brand-navy/60 border-gray-200 hover:border-brand-navy/50 hover:text-brand-navy'
               }`}
             >
               {p.name}
