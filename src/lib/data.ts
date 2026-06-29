@@ -4,19 +4,36 @@ export const ROOMS: Room[] = ['Minimes', 'Saint-Cyprien', 'Ramonville', 'États-
 export const COACHES: CoachName[] = ['Mehdi', 'Dadi', 'Walid', 'Faye', 'Valentin Gutt', 'Renaud'];
 
 export const TIME_SLOTS: TimeSlot[] = [
-  { id: 'ts-free-1', label: '09h00 - 10h00', startTime: '09:00', endTime: '10:00', isTraining: false },
+  { id: 'ts-perm-1', label: '09h00 - 10h00', startTime: '09:00', endTime: '10:00', isTraining: false },
   { id: 'ts-1', label: '10h00 - 11h00', startTime: '10:00', endTime: '11:00', isTraining: true },
-  { id: 'ts-free-2', label: '11h00 - 12h30', startTime: '11:00', endTime: '12:30', isTraining: false },
+  { id: 'ts-perm-2', label: '11h00 - 12h00', startTime: '11:00', endTime: '12:00', isTraining: false },
+  { id: 'ts-perm-3', label: '12h00 - 12h30', startTime: '12:00', endTime: '12:30', isTraining: false },
   { id: 'ts-2', label: '12h30 - 13h30', startTime: '12:30', endTime: '13:30', isTraining: true },
-  { id: 'ts-free-3', label: '13h30 - 20h00', startTime: '13:30', endTime: '20:00', isTraining: false },
+  { id: 'ts-pause-1', label: '13h30 - 17h00', startTime: '13:30', endTime: '17:00', isTraining: false }, // C'est la pause
+  { id: 'ts-perm-4', label: '17h00 - 20h00', startTime: '17:00', endTime: '20:00', isTraining: false },
   { id: 'ts-3', label: '20h00 - 21h00', startTime: '20:00', endTime: '21:00', isTraining: true },
 ];
 
 export const INITIAL_PERIODS: Period[] = [
   {
-    id: 'p1',
-    name: 'Période 1 (20 juillet - 2 août)',
+    id: 'p1a',
+    name: 'Période 1A (20 juil - 26 juil)',
     startDate: '2026-07-20',
+    endDate: '2026-07-26',
+    hasTraining: true,
+    coachAssignments: {
+      'Mehdi': 'Minimes',
+      'Dadi': 'Saint-Cyprien',
+      'Walid': 'États-Unis',
+      'Faye': null,
+      'Valentin Gutt': null,
+      'Renaud': 'Ramonville',
+    }
+  },
+  {
+    id: 'p1b',
+    name: 'Période 1B (27 juil - 2 août)',
+    startDate: '2026-07-27',
     endDate: '2026-08-02',
     hasTraining: true,
     coachAssignments: {
@@ -53,9 +70,9 @@ export const INITIAL_PERIODS: Period[] = [
       'Mehdi': null,
       'Dadi': 'Saint-Cyprien',
       'Walid': 'Minimes',
-      'Faye': null,
-      'Valentin Gutt': 'Ramonville',
-      'Renaud': 'États-Unis',
+      'Faye': 'Ramonville', // Faye remplace Renaud
+      'Valentin Gutt': 'États-Unis',
+      'Renaud': null,
     }
   }
 ];

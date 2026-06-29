@@ -89,18 +89,6 @@ export function MembersSchedule() {
                     })}
                   </tr>
                 ))}
-                {/* Ligne des coachs */}
-                <tr>
-                  <td className="py-2 px-1 border-r border-gray-300 font-medium bg-gray-50 print:p-2"></td>
-                  {weekDates.map(date => (
-                    <td 
-                      key={date} 
-                      className={`border-r border-gray-300 font-bold uppercase tracking-wide py-2 px-1 text-xs sm:text-sm print:text-xs ${assignedCoach ? (COACH_COLORS[assignedCoach] || 'bg-gray-200 text-gray-800') : 'bg-white'}`}
-                    >
-                      {assignedCoach || ''}
-                    </td>
-                  ))}
-                </tr>
               </tbody>
             </table>
           </div>

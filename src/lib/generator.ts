@@ -33,49 +33,35 @@ export function generateScheduleForPeriod(period: Period, existingSessions: Clas
       
       if (!coach) return; // No coach assigned to this room, skip generating classes here
 
-      TIME_SLOTS.filter(s => s.isTraining).forEach((slot, slotIndex) => {
-        // Simple heuristic to alternate disciplines
-        const disciplineIndex = (dayIndex + roomIndex + slotIndex) % DISCIPLINES.length;
-        const discipline = DISCIPLINES[disciplineIndex];
+      TIME_SLOTS.forEach((slot, slotIndex) => {
+        if (slot.isTraining) {
+          // Simple heuristic to alternate disciplines
+          const disciplineIndex = (dayIndex + roomIndex + slotIndex) % DISCIPLINES.length;
+          const discipline = DISCIPLINES[disciplineIndex];
 
-        sessions.push({
-          id: `session-${period.id}-${room}-${dateStr}-${slot.id}`,
-          periodId: period.id,
-          date: dateStr,
-          timeSlotId: slot.id,
-          roomId: room,
-          coachId: coach,
-          discipline: discipline,
-          isPermanence: false
-        });
-      });
-    });
-  });
-
-  // Now, calculate remaining hours to reach TARGET_HOURS and generate permanences
-  // We'll group sessions by coach and by week.
-  // For simplicity in this mock generator, let's just generate a block of permanence 
-  // on a specific time slot (or fake time slots) if they don't have classes.
-  // Actually, we can generate a daily permanence block of 4 hours to reach the 35h goal
-  // (Since they have 3 hours of classes, 35/5 = 7h per day, so 7 - 3 = 4h permanence).
-  
-  days.forEach(day => {
-    const dateStr = format(day, 'yyyy-MM-dd');
-    
-    COACHES.forEach(coach => {
-      const isAssigned = Object.values(period.coachAssignments).includes(coach as any); // Check if coach has a room this period
-      if (!isAssigned) return;
-
-      // Add a permanence block during the long afternoon gap (13h30 - 20h00)
-      sessions.push({
-        id: `perm-${period.id}-${coach}-${dateStr}`,
-        periodId: period.id,
-        date: dateStr,
-        timeSlotId: 'ts-free-3', // L'après-midi en Accès Libre
-        roomId: period.coachAssignments[coach] as Room, // Usually at their assigned room
-        coachId: coach,
-        discipline: 'Permanence',
-        isPermanence: true
+          sessions.push({
+            id: `session-${period.id}-${room}-${dateStr}-${slot.id}`,
+            periodId: period.id,
+            date: dateStr,
+            timeSlotId: slot.id,
+            roomId: room,
+            coachId: coach,
+            discipline: discipline,
+            isPermanence: false
+          });
+        } else if (slot.id !== 'ts-pause-1') {
+          // Permanence pour tous les créneaux non-training sauf la pause
+          sessions.push({
+            id: `perm-${period.id}-${coach}-${dateStr}-${slot.id}`,
+            periodId: period.id,
+            date: dateStr,
+            timeSlotId: slot.id,
+            roomId: room,
+            coachId: coach,
+            discipline: 'Permanence',
+            isPermanence: true
+          });
+        }
       });
     });
   });
