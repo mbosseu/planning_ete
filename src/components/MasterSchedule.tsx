@@ -50,45 +50,47 @@ export function MasterSchedule() {
       </div>
 
       <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-10">
           {dates.map(date => {
             const dateSessions = periodSessions.filter(s => s.date === date);
             const dateObj = parseISO(date);
             
             return (
-              <div key={date} className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
-                <div className="bg-brand-navy px-6 py-4 border-b border-brand-navy">
-                  <h2 className="font-oswald text-xl uppercase tracking-wider text-brand-gold">
+              <div key={date} className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+                <div className="bg-gradient-to-r from-[#1c2646] to-[#2a3861] px-8 py-5 border-b-4 border-[#c59e5e]">
+                  <h2 className="font-sans font-black text-2xl uppercase tracking-widest text-white drop-shadow-md">
                     {format(dateObj, 'EEEE d MMMM yyyy', { locale: fr })}
                   </h2>
                 </div>
-                <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   {/* Group by room */}
                   {Array.from(new Set(dateSessions.map(s => s.roomId))).map(room => {
                     const roomSessions = dateSessions.filter(s => s.roomId === room);
                     return (
                       <div key={room} className="space-y-4">
-                        <h3 className="font-oswald text-lg uppercase tracking-wide text-brand-navy border-b border-gray-200 pb-2">{room}</h3>
+                        <h3 className="font-sans font-bold text-lg uppercase tracking-wider text-[#1c2646] border-b-2 border-gray-100 pb-2">
+                          <span className="text-[#c59e5e] mr-2">/</span> {room}
+                        </h3>
                         {roomSessions.map(session => (
                           <div 
                             key={session.id} 
-                            className={`p-4 rounded-lg border-l-4 text-sm shadow-sm ${
+                            className={`p-4 rounded-xl border-l-[6px] shadow-sm transition-transform hover:-translate-y-1 ${
                               session.isPermanence || session.discipline === 'ACCES LIBRE' || session.discipline === 'Pause'
-                                ? 'bg-brand-gold/10 border-brand-gold text-brand-navy'
-                                : 'bg-white border-brand-navy text-brand-navy'
+                                ? 'bg-[#c59e5e]/10 border-[#c59e5e] text-[#1c2646]'
+                                : 'bg-white border-[#1c2646] text-[#1c2646]'
                             }`}
                           >
-                            <div className="font-bold text-lg font-oswald tracking-wide">
+                            <div className="font-black text-lg tracking-wide">
                               {session.isPermanence ? 'PERMANENCE' : session.timeSlotId}
                             </div>
-                            <div className="text-brand-navy/70 uppercase font-semibold mt-1">
+                            <div className="text-[#1c2646]/70 uppercase font-bold mt-1 text-sm">
                               {session.discipline}
                             </div>
-                            <div className="mt-3 flex items-center gap-3 border-t border-brand-navy/10 pt-3">
-                              <div className="w-8 h-8 rounded-full bg-brand-navy flex items-center justify-center text-sm font-bold text-white shadow-sm">
+                            <div className="mt-4 flex items-center gap-3 pt-3 border-t border-gray-100">
+                              <div className="w-8 h-8 rounded-lg bg-[#1c2646] flex items-center justify-center text-sm font-bold text-white shadow-md">
                                 {session.coachId ? session.coachId.charAt(0) : '?'}
                               </div>
-                              <span className="font-bold uppercase">{session.coachId || 'Aucun'}</span>
+                              <span className="font-bold text-sm uppercase">{session.coachId || 'Aucun'}</span>
                             </div>
                           </div>
                         ))}

@@ -46,18 +46,18 @@ export function CoachSchedule() {
     return (
       <div className="space-y-8 print:space-y-6">
         {weeks.map((weekDates, weekIdx) => (
-          <div key={weekIdx} className="overflow-x-auto print:overflow-visible border border-gray-300 bg-white rounded-lg shadow-sm">
-            <table className="w-full text-center border-collapse text-sm text-gray-900">
+          <div key={weekIdx} className="overflow-x-auto print:overflow-visible bg-white rounded-2xl shadow-xl border border-gray-100">
+            <table className="w-full text-center border-collapse text-sm">
               <thead>
                 <tr>
-                  <th colSpan={weekDates.length + 1} className="py-4 text-2xl font-oswald uppercase tracking-widest border-b border-brand-navy bg-brand-navy text-brand-gold">
-                    Coach : {coach} <span className="text-white/80 font-sans tracking-normal ml-2 text-lg">({activePeriod?.name} - Semaine {weekIdx + 1})</span>
+                  <th colSpan={weekDates.length + 1} className="py-5 text-2xl font-sans font-black uppercase tracking-widest bg-gradient-to-r from-[#1c2646] to-[#2a3861] text-white border-b-4 border-[#c59e5e]">
+                    Coach : <span className="text-[#c59e5e]">{coach}</span> <span className="text-white/60 font-medium ml-3 text-lg tracking-normal">({activePeriod?.name} - Semaine {weekIdx + 1})</span>
                   </th>
                 </tr>
                 <tr>
-                  <th className="border-r border-b border-gray-300 w-24 bg-gray-100 print:p-2"></th>
+                  <th className="border-r border-b-2 border-gray-100 w-24 bg-gray-50 print:p-2"></th>
                   {weekDates.map(date => (
-                    <th key={date} className="py-3 px-1 border-r border-b border-gray-300 font-bold uppercase bg-gray-100 text-brand-navy text-xs sm:text-sm print:text-xs">
+                    <th key={date} className="py-4 px-2 border-r border-b-2 border-gray-100 font-bold uppercase bg-gray-50 text-[#1c2646] text-xs sm:text-sm print:text-xs">
                       {format(parseISO(date), 'EEEE', { locale: fr })}
                     </th>
                   ))}
@@ -65,23 +65,30 @@ export function CoachSchedule() {
               </thead>
               <tbody>
                 {TIME_SLOTS.map(slot => (
-                  <tr key={slot.id}>
-                    <td className="py-2 px-1 border-r border-b border-gray-300 font-medium bg-gray-50 text-xs sm:text-sm print:text-xs">
+                  <tr key={slot.id} className="hover:bg-gray-50/50 transition-colors">
+                    <td className="py-3 px-2 border-r border-b border-gray-100 font-bold text-[#1c2646] bg-gray-50/50 text-xs sm:text-sm print:text-xs">
                       {slot.label}
                     </td>
                     {weekDates.map(date => {
                       const session = coachSessions.find(s => s.date === date && s.timeSlotId === slot.id);
-                      const colorClass = session ? (DISCIPLINE_COLORS[session.discipline] || 'bg-gray-200 text-gray-800') : 'bg-white text-gray-600';
+                      let content = <span className="text-gray-300">-</span>;
+                      let cellClass = "bg-white";
+                      
+                      if (session) {
+                        const isPerm = session.isPermanence || session.discipline === 'ACCES LIBRE' || session.discipline === 'Pause';
+                        cellClass = isPerm ? 'bg-[#c59e5e]/10 text-[#1c2646]' : 'bg-white text-[#1c2646]';
+                        content = (
+                          <>
+                            <span className="font-bold text-sm">{session.discipline}</span>
+                            <span className="text-[10px] sm:text-[11px] font-semibold text-[#c59e5e] mt-1">{session.roomId}</span>
+                          </>
+                        );
+                      }
                       
                       return (
-                        <td key={date} className={`border-r border-b border-gray-300 font-bold uppercase tracking-wide text-xs sm:text-sm print:text-xs ${colorClass}`}>
-                          <div className="w-full h-full p-2 sm:p-4 print:p-2 flex flex-col items-center justify-center min-h-[40px] sm:min-h-[80px] print:min-h-[60px]">
-                            {session ? (
-                              <>
-                                <span>{session.discipline}</span>
-                                <span className="text-[10px] sm:text-[11px] opacity-90 mt-1">{session.roomId}</span>
-                              </>
-                            ) : '-'}
+                        <td key={date} className={`border-r border-b border-gray-100 font-bold uppercase tracking-wide text-xs sm:text-sm print:text-xs ${cellClass}`}>
+                          <div className="w-full h-full p-2 flex flex-col items-center justify-center min-h-[50px] sm:min-h-[80px] print:min-h-[60px]">
+                            {content}
                           </div>
                         </td>
                       );
@@ -90,13 +97,15 @@ export function CoachSchedule() {
                 ))}
                 {/* Ligne des Salles */}
                 <tr>
-                  <td className="py-2 px-1 border-r border-gray-300 font-medium bg-gray-50 print:p-2"></td>
+                  <td className="py-4 px-2 border-r border-gray-100 font-bold text-[#1c2646] bg-gray-50/50 print:p-2">
+                    SALLE
+                  </td>
                   {weekDates.map(date => (
                     <td 
                       key={date} 
-                      className={`border-r border-gray-300 font-bold uppercase tracking-wide py-2 px-1 text-xs sm:text-sm print:text-xs ${assignedRoom ? (ROOM_COLORS[assignedRoom] || 'bg-gray-200 text-gray-800') : 'bg-white'}`}
+                      className={`border-r border-gray-100 font-black uppercase tracking-widest py-3 px-2 text-xs sm:text-sm print:text-xs ${assignedRoom ? 'bg-[#1c2646] text-white' : 'bg-gray-100 text-gray-400'}`}
                     >
-                      {assignedRoom || ''}
+                      {assignedRoom || '-'}
                     </td>
                   ))}
                 </tr>
