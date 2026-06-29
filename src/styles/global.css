@@ -4,6 +4,24 @@
   --color-brand-navy: #1c2646;
   --color-brand-gold: #c59e5e;
   --color-brand-light: #f8f9fa;
+  
+  /* Nouveau design sombre */
+  --color-dark-bg: #0f121d;
+  --color-dark-surface: #141824;
+  --color-dark-surface-header: #214a87;
+  --color-dark-surface-time: #161c2d;
+  
+  /* Couleurs des coachs */
+  --color-coach-dadi: #f59e0b; /* Ambre/Doré */
+  --color-coach-hicham: #38bdf8; /* Bleu clair */
+  --color-coach-tawee: #ef4444; /* Rouge */
+  --color-coach-victor: #10b981; /* Vert */
+  --color-coach-mehdi: #6366f1; /* Indigo */
+  --color-coach-walid: #ec4899; /* Rose */
+  --color-coach-faye: #8b5cf6; /* Violet */
+  --color-coach-renaud: #f97316; /* Orange */
+  --color-coach-valentin: #64748b; /* Gris-bleu */
+
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-oswald: 'Oswald', sans-serif;
 }
