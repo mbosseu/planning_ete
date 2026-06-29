@@ -10,13 +10,17 @@
     zoom: 0.65;
   }
 
-  /* When printing all-schedules, hide the individual tables */
+  /* When printing all-schedules, hide the individual tables and SHOW all-schedules */
   body[data-print-target="all-schedules"] #members-schedule-table,
   body[data-print-target="all-schedules"] #coach-schedule-table {
     display: none !important;
   }
+  
+  body[data-print-target="all-schedules"] #all-schedules {
+    display: block !important;
+  }
 
-  /* When printing individual tables, hide all-schedules */
+  /* When printing individual tables, hide all-schedules (redundant now, but safe) */
   body[data-print-target="members-schedule-table"] #all-schedules,
   body[data-print-target="coach-schedule-table"] #all-schedules {
     display: none !important;

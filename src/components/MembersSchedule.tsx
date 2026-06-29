@@ -167,7 +167,7 @@ export function MembersSchedule() {
             {renderTable(activeRoom)}
           </div>
           
-          <div id="all-schedules" className="hidden print:block">
+          <div id="all-schedules" className="hidden">
             {ROOMS.map((room, idx) => (
               <div key={room} className={idx < ROOMS.length - 1 ? "print-page-break" : ""}>
                 <h2 className="text-2xl font-bold text-center mb-4 pb-2 border-b-2 border-gray-200">
