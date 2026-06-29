@@ -49,8 +49,8 @@ export function generateScheduleForPeriod(period: Period, existingSessions: Clas
             discipline: discipline,
             isPermanence: false
           });
-        } else if (slot.id !== 'ts-pause-1') {
-          // Permanence pour tous les créneaux non-training sauf la pause
+        } else {
+          const isPause = slot.id === 'ts-pause-1';
           sessions.push({
             id: `perm-${period.id}-${coach}-${dateStr}-${slot.id}`,
             periodId: period.id,
@@ -58,8 +58,8 @@ export function generateScheduleForPeriod(period: Period, existingSessions: Clas
             timeSlotId: slot.id,
             roomId: room,
             coachId: coach,
-            discipline: 'Permanence',
-            isPermanence: true
+            discipline: isPause ? 'Pause' : 'Permanence',
+            isPermanence: !isPause // For stats, Pause is not permanence
           });
         }
       });
