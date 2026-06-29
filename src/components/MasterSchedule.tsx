@@ -56,13 +56,14 @@ export function MasterSchedule() {
             const dateObj = parseISO(date);
             
             return (
-              <div key={date} className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
-                <div className="bg-gradient-to-r from-[#1c2646] to-[#2a3861] px-8 py-5 border-b-4 border-[#c59e5e]">
-                  <h2 className="font-sans font-black text-2xl uppercase tracking-widest text-white drop-shadow-md">
+              <div key={date} className="bg-white rounded-[1.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.12)] overflow-hidden border border-gray-100">
+                <div className="bg-[#1c2646] px-8 py-6 border-b-[6px] border-[#c59e5e] flex items-center justify-between">
+                  <h2 className="font-sans font-black text-3xl uppercase tracking-widest text-white drop-shadow-md">
                     {format(dateObj, 'EEEE d MMMM yyyy', { locale: fr })}
                   </h2>
+                  <img src="/logo.png" alt="Boxing Center" className="h-12 object-contain" />
                 </div>
-                <div className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 bg-gray-50/30">
                   {/* Group by room */}
                   {Array.from(new Set(dateSessions.map(s => s.roomId))).map(room => {
                     const roomSessions = dateSessions.filter(s => s.roomId === room);

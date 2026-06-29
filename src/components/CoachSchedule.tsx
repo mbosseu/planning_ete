@@ -44,14 +44,23 @@ export function CoachSchedule() {
     }
 
     return (
-      <div className="space-y-8 print:space-y-6">
+      <div className="space-y-12 print:space-y-8">
         {weeks.map((weekDates, weekIdx) => (
-          <div key={weekIdx} className="overflow-x-auto print:overflow-visible bg-white rounded-2xl shadow-xl border border-gray-100">
+          <div key={weekIdx} className="overflow-x-auto print:overflow-visible bg-white rounded-[1.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-gray-100">
             <table className="w-full text-center border-collapse text-sm">
               <thead>
                 <tr>
-                  <th colSpan={weekDates.length + 1} className="py-5 text-2xl font-sans font-black uppercase tracking-widest bg-gradient-to-r from-[#1c2646] to-[#2a3861] text-white border-b-4 border-[#c59e5e]">
-                    Coach : <span className="text-[#c59e5e]">{coach}</span> <span className="text-white/60 font-medium ml-3 text-lg tracking-normal">({activePeriod?.name} - Semaine {weekIdx + 1})</span>
+                  <th colSpan={weekDates.length + 1} className="py-6 px-8 bg-[#1c2646] border-b-[6px] border-[#c59e5e]">
+                    <div className="flex justify-between items-center">
+                      <div className="text-left">
+                        <div className="text-[#c59e5e] font-black tracking-widest text-sm mb-1 uppercase">Boxing Center Planning</div>
+                        <div className="text-3xl font-sans font-black uppercase tracking-widest text-white">
+                          Coach : <span className="text-[#c59e5e]">{coach}</span> 
+                          <span className="text-white/60 font-medium ml-3 text-xl tracking-normal">({activePeriod?.name} - Sem. {weekIdx + 1})</span>
+                        </div>
+                      </div>
+                      <img src="/logo.png" alt="Boxing Center" className="h-14 object-contain" />
+                    </div>
                   </th>
                 </tr>
                 <tr>
