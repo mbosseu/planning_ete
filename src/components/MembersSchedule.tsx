@@ -56,14 +56,14 @@ export function MembersSchedule() {
             <table className="w-full text-center border-collapse text-sm text-gray-900">
               <thead>
                 <tr>
-                  <th colSpan={weekDates.length + 1} className="py-4 text-xl font-bold uppercase tracking-wider border-b border-gray-300 bg-gray-50">
-                    {room} <span className="text-gray-500 font-medium ml-2 text-lg">({activePeriod?.name} - Semaine {weekIdx + 1})</span>
+                  <th colSpan={weekDates.length + 1} className="py-4 text-2xl font-oswald uppercase tracking-widest border-b border-brand-navy bg-brand-navy text-brand-gold">
+                    {room} <span className="text-white/80 font-sans tracking-normal ml-2 text-lg">({activePeriod?.name} - Semaine {weekIdx + 1})</span>
                   </th>
                 </tr>
                 <tr>
-                  <th className="border-r border-b border-gray-300 w-24 bg-gray-50 print:p-2"></th>
+                  <th className="border-r border-b border-gray-300 w-24 bg-gray-100 print:p-2"></th>
                   {weekDates.map(date => (
-                    <th key={date} className="py-2 px-1 border-r border-b border-gray-300 font-bold uppercase bg-gray-50 text-xs sm:text-sm print:text-xs">
+                    <th key={date} className="py-3 px-1 border-r border-b border-gray-300 font-bold uppercase bg-gray-100 text-brand-navy text-xs sm:text-sm print:text-xs">
                       {format(parseISO(date), 'EEEE', { locale: fr })}
                     </th>
                   ))}
@@ -72,7 +72,7 @@ export function MembersSchedule() {
               <tbody>
                 {TIME_SLOTS.map(slot => (
                   <tr key={slot.id}>
-                    <td className="py-2 px-1 border-r border-b border-gray-300 font-medium bg-gray-50 text-xs sm:text-sm print:text-xs">
+                    <td className="py-2 px-1 border-r border-b border-gray-300 font-medium bg-gray-100 text-brand-navy text-xs sm:text-sm print:text-xs">
                       {slot.label}
                     </td>
                     {weekDates.map(date => {
@@ -105,10 +105,10 @@ export function MembersSchedule() {
             <button
               key={r}
               onClick={() => setActiveRoom(r)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+              className={`px-5 py-2 rounded-lg text-sm font-bold uppercase tracking-wider whitespace-nowrap transition-colors border-2 ${
                 activeRoom === r 
-                  ? 'bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900' 
-                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
+                  ? 'bg-brand-navy border-brand-navy text-brand-gold shadow-md' 
+                  : 'bg-white text-brand-navy/60 border-gray-200 hover:border-brand-navy/50 hover:text-brand-navy'
               }`}
             >
               {r.toUpperCase()}
@@ -123,10 +123,10 @@ export function MembersSchedule() {
             <button
               key={p.id}
               onClick={() => setActivePeriodId(p.id)}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
+              className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide whitespace-nowrap transition-colors border-2 ${
                 activePeriodId === p.id 
-                  ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300' 
-                  : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
+                  ? 'bg-brand-navy border-brand-navy text-brand-gold shadow-md' 
+                  : 'bg-white text-brand-navy/60 border-gray-200 hover:border-brand-navy/50 hover:text-brand-navy'
               }`}
             >
               {p.name}

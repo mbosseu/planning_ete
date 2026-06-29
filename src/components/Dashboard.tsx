@@ -61,42 +61,42 @@ export function Dashboard() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Tableau de bord</h1>
-        <Button onClick={() => generateAndSave()}>
+        <h1 className="text-3xl font-oswald uppercase text-brand-navy tracking-wide">Tableau de bord</h1>
+        <Button onClick={() => generateAndSave()} className="bg-brand-gold hover:bg-brand-gold/90 text-white font-bold rounded-lg px-6 py-2">
           Générer automatiquement le planning
         </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-          <div className="text-sm text-gray-500">Salles Actives</div>
-          <div className="text-3xl font-semibold mt-1">{ROOMS.length}</div>
+        <div className="bg-white p-6 rounded-xl shadow-md border-l-4 border-brand-navy">
+          <div className="text-sm font-semibold uppercase text-brand-navy/60">Salles Actives</div>
+          <div className="text-4xl font-oswald text-brand-navy mt-2">{ROOMS.length}</div>
         </div>
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-          <div className="text-sm text-gray-500">Coachs</div>
-          <div className="text-3xl font-semibold mt-1">{COACHES.length}</div>
+        <div className="bg-white p-6 rounded-xl shadow-md border-l-4 border-brand-navy">
+          <div className="text-sm font-semibold uppercase text-brand-navy/60">Coachs</div>
+          <div className="text-4xl font-oswald text-brand-navy mt-2">{COACHES.length}</div>
         </div>
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-          <div className="text-sm text-gray-500">Total Cours</div>
-          <div className="text-3xl font-semibold mt-1">{totalClasses}</div>
+        <div className="bg-white p-6 rounded-xl shadow-md border-l-4 border-brand-navy">
+          <div className="text-sm font-semibold uppercase text-brand-navy/60">Total Cours</div>
+          <div className="text-4xl font-oswald text-brand-navy mt-2">{totalClasses}</div>
         </div>
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-          <div className="text-sm text-gray-500">Périodes config.</div>
-          <div className="text-3xl font-semibold mt-1">{periods.length}</div>
+        <div className="bg-brand-navy p-6 rounded-xl shadow-md border-l-4 border-brand-gold">
+          <div className="text-sm font-semibold uppercase text-brand-light/70">Périodes config.</div>
+          <div className="text-4xl font-oswald text-brand-gold mt-2">{periods.length}</div>
         </div>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
-        <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Moyenne d'Heures Hebdomadaires par Coach</h2>
-        <div className="space-y-4">
+      <div className="bg-white rounded-xl shadow-md border border-gray-100 p-6">
+        <h2 className="text-xl font-oswald uppercase tracking-wide mb-6 text-brand-navy border-b-2 border-brand-gold pb-2 inline-block">Heures Hebdomadaires par Coach</h2>
+        <div className="space-y-5 mt-4">
           {coachStats.map(stat => (
             <div key={stat.name} className="flex items-center justify-between">
-              <span className="w-32 font-medium">{stat.name}</span>
-              <div className="flex-1 mx-4 bg-gray-100 dark:bg-gray-700 rounded-full h-3 overflow-hidden flex">
-                <div className="bg-indigo-500 h-full" style={{ width: `${(stat.classesWeekly / 35) * 100}%` }} title={`Cours: ${stat.classesWeekly.toFixed(1)}h`} />
-                <div className="bg-emerald-500 h-full" style={{ width: `${(stat.permsWeekly / 35) * 100}%` }} title={`Permanences: ${stat.permsWeekly.toFixed(1)}h`} />
+              <span className="w-32 font-bold uppercase text-brand-navy">{stat.name}</span>
+              <div className="flex-1 mx-4 bg-gray-100 rounded-full h-4 overflow-hidden flex border border-gray-200">
+                <div className="bg-brand-navy h-full transition-all duration-500" style={{ width: `${(stat.classesWeekly / 35) * 100}%` }} title={`Cours: ${stat.classesWeekly.toFixed(1)}h`} />
+                <div className="bg-brand-gold h-full transition-all duration-500" style={{ width: `${(stat.permsWeekly / 35) * 100}%` }} title={`Permanences: ${stat.permsWeekly.toFixed(1)}h`} />
               </div>
-              <span className="w-16 text-right text-sm text-gray-500">{Math.round(stat.totalWeekly)}h / 35h</span>
+              <span className="w-20 text-right text-sm font-bold text-brand-navy bg-brand-light px-2 py-1 rounded">{Math.round(stat.totalWeekly)}h / 35h</span>
             </div>
           ))}
         </div>

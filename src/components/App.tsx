@@ -27,23 +27,23 @@ export function App() {
       
       <div className="space-y-6 print:space-y-0 print:m-0 print:p-0">
         <div className="print:hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <h2 className="text-2xl font-bold">Vues du Planning</h2>
-          <div className="flex flex-wrap w-full sm:w-auto bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
+          <h2 className="text-3xl font-oswald uppercase tracking-wider text-brand-navy">Vues du Planning</h2>
+          <div className="flex flex-wrap w-full sm:w-auto bg-gray-200 p-1 rounded-lg">
             <button 
               onClick={() => setActiveTab('master')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'master' ? 'bg-white dark:bg-gray-700 shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'}`}
+              className={`px-4 py-2 rounded-md text-sm font-bold uppercase transition-colors ${activeTab === 'master' ? 'bg-brand-navy text-white shadow-md' : 'text-brand-navy/60 hover:text-brand-navy'}`}
             >
               Maître
             </button>
             <button 
               onClick={() => setActiveTab('members')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'members' ? 'bg-white dark:bg-gray-700 shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'}`}
+              className={`px-4 py-2 rounded-md text-sm font-bold uppercase transition-colors ${activeTab === 'members' ? 'bg-brand-navy text-white shadow-md' : 'text-brand-navy/60 hover:text-brand-navy'}`}
             >
               Adhérents
             </button>
             <button 
               onClick={() => setActiveTab('coach')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'coach' ? 'bg-white dark:bg-gray-700 shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'}`}
+              className={`px-4 py-2 rounded-md text-sm font-bold uppercase transition-colors ${activeTab === 'coach' ? 'bg-brand-navy text-white shadow-md' : 'text-brand-navy/60 hover:text-brand-navy'}`}
             >
               Coachs
             </button>
